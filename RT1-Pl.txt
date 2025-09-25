@@ -143,6 +143,11 @@ interface GigabitEthernet0/2.203
  ipv6 address FE80::203:1 link-local
 !
 !
+ip route 0.0.0.0 0.0.0.0 10.0.0.1 
+ip route 0.0.0.0 0.0.0.0 10.0.0.10 
+ip route 172.20.8.0 255.255.252.0 172.20.8.146 
+ip route 10.0.0.0 255.255.255.252 10.0.0.1 
+ip route 10.0.0.8 255.255.255.252 10.0.0.10 
 !
 banner motd '
 Welcome to RT1-Pl!'

@@ -93,6 +93,13 @@ interface Vlan1
  no ip address
  shutdown
 !
+ip route 0.0.0.0 0.0.0.0 10.0.0.2 
+ip route 0.0.0.0 0.0.0.0 10.0.0.6 
+ip route 172.20.0.0 255.255.248.0 172.20.0.158 
+ip route 172.20.0.0 255.255.248.0 172.20.0.154 
+ip route 10.0.0.0 255.255.255.252 10.0.0.2 
+ip route 10.0.0.4 255.255.255.252 10.0.0.6 
+!
 banner motd '
 Welcome to RT1-Zg!'
 !
