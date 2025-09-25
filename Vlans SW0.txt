@@ -1,0 +1,7 @@
+Vlan 102
+name Zagreb-Pula
+Vlan 103
+name Zagreb-Split
+Vlan 203
+name Pula-Split
+exit

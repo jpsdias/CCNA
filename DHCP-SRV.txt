@@ -1,0 +1,124 @@
+service password-encryption
+security passwords min-length 10
+!
+hostname DHCP-SRV
+!
+login block-for 300 attempts 3 within 120
+!
+!
+enable secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
+!
+!
+ip dhcp excluded-address 172.20.3.0 172.20.3.5
+ip dhcp excluded-address 172.20.2.0 172.20.2.5
+ip dhcp excluded-address 172.20.6.0 172.20.6.5
+ip dhcp excluded-address 172.20.4.0 172.20.4.5
+ip dhcp excluded-address 172.20.1.0 172.20.1.5
+!
+ip dhcp pool Administration
+ network 172.20.3.0 255.255.255.0
+ default-router 172.20.3.1
+ip dhcp pool Staff
+ network 172.20.2.0 255.255.255.0
+ default-router 172.20.2.1
+ip dhcp pool VoIP
+ network 172.20.6.0 255.255.254.0
+ default-router 172.20.6.1
+ip dhcp pool Wireless-Zg
+ network 172.20.4.0 255.255.254.0
+ default-router 172.20.4.1
+ip dhcp pool Guests-Zg
+ network 172.20.1.0 255.255.255.0
+ default-router 172.20.1.1
+!
+!
+!
+!
+!
+!
+!
+username cisco secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+ip host AP1-Zg 172.20.0.165 
+ip host DHCP-SRV 172.20.0.196 
+ip host MLS1-Zg 172.20.0.158 
+ip host MLS2-Zg 172.20.0.154 
+ip host PCA 172.20.3.4 
+ip host PCB 172.20.2.4 
+ip host RT1-Zg-MLS1 172.20.0.157 
+ip host RT1-Zg-MLS2 172.20.0.153 
+ip host RT1-Zg-Wan 10.0.0.1 10.0.0.5 
+ip host SW1-Zg 172.20.0.228 
+ip host SW2-Zg 172.20.0.229 
+ip host WLC1-Zg 172.20.0.230
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/0.10
+ description Connection to SW1-Zg
+ encapsulation dot1Q 10
+ ip address 172.20.0.196 255.255.255.224
+ ipv6 address 2001:A:0:6::4/64
+!
+interface GigabitEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+banner motd '
+Welcome to DHCP-SRV!'
+!
+!
+!
+!
+!
+!
+line vty 0 4
+ exec-timeout 0 30
+ login local
+ transport input ssh
+!
+!
+!
+end
+

@@ -1,0 +1,229 @@
+service password-encryption
+security passwords min-length 10
+!
+hostname SW1-Pl
+!
+login block-for 300 attempts 3 within 120
+!
+!
+enable secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+ip host AP1-Pl 172.20.8.154 
+ip host PCC 172.20.9.2 
+ip host RT1-Pl-Aps 172.20.8.153  
+ip host RT1-Pl-Mng 172.20.8.145  
+ip host RT1-Pl-Stf 172.20.9.1 
+ip host RT1-Pl-Wir 172.20.10.1 
+ip host RT1-Pl-Gst 172.20.8.193 
+ip host RT1-Pl-Eng 172.20.11.1 
+ip host RT1-Pl-Dsg 172.20.8.160 
+ip host RT1-Pl-Com 172.20.9.129 
+ip host RT1-Pl-Wan 10.0.0.2 10.0.0.9 
+ip host SW1-Pl 172.20.8.146 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/1
+ description Connection to RT1-Pl
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5-6,30,50,60
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ description Connection to PCC
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/3
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/4
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/5
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/6
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/7
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/8
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/9
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/10
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/11
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/12
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/13
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/14
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/15
+ switchport access vlan 30
+ switchport mode access
+ switchport nonegotiate
+!
+interface FastEthernet0/16
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/17
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/18
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/19
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/20
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/21
+ description Connection to AP1-Pl
+ switchport trunk native vlan 5
+ switchport trunk allowed vlan 5,50,60
+ switchport mode trunk
+!
+interface FastEthernet0/22
+ switchport trunk native vlan 5
+ switchport trunk allowed vlan 5,50,60
+ switchport mode trunk
+!
+interface FastEthernet0/23
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface FastEthernet0/24
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface GigabitEthernet0/1
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface GigabitEthernet0/2
+ switchport access vlan 99
+ switchport mode access
+ switchport nonegotiate
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan6
+ ip address 172.20.8.146 255.255.255.248
+ ipv6 address 2001:B:0:7::2/64
+!
+ip default-gateway 172.20.8.145
+!
+banner motd '
+Welcome to SW1-Pl!'
+!
+!
+!
+!
+!
+!
+line vty 0 4
+ exec-timeout 0 30
+ login local
+ transport input ssh
+!
+!
+!
+end
+

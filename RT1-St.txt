@@ -1,0 +1,163 @@
+service password-encryption
+security passwords min-length 10
+!
+hostname RT1-St
+!
+login block-for 300 attempts 3 within 120
+!
+!
+enable secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
+!
+!
+ip dhcp excluded-address 172.20.13.128 172.20.13.133
+ip dhcp excluded-address 172.20.13.0 172.20.13.5
+ip dhcp excluded-address 172.20.12.32 172.20.12.37
+!
+ip dhcp pool Staff
+ network 172.20.13.128 255.255.255.128
+ default-router 172.20.13.129
+ip dhcp pool Wireless-St
+ network 172.20.13.0 255.255.255.128
+ default-router 172.20.13.1
+ip dhcp pool Guests-St
+ network 172.20.12.32 255.255.255.224
+ default-router 172.20.12.33
+!
+!
+!
+!
+!
+!
+!
+username cisco secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+ip host AP1-St 172.20.12.26 
+ip host PCD 172.20.13.130 
+ip host RT1-St-Aps 172.20.12.25 
+ip host RT1-St-Mng 172.20.12.17 
+ip host RT1-St-Stf 172.20.13.129 
+ip host RT1-St-Wir 172.20.13.1 
+ip host RT1-St-Gst 172.20.12.33 
+ip host RT1-St-Mul 172.20.12.193 
+ip host RT1-St-Dsg 172.20.12.129 
+ip host RT1-St-Com 172.20.12.65 
+ip host RT1-St-Wan 10.0.0.6 10.0.0.10 
+ip host SW1-St 172.20.12.18 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Multimedia Network
+ ip address 172.20.12.193 255.255.255.192
+ ipv6 address 2001:C::1/64
+!
+interface Loopback1
+ description Design Network
+ ip address 172.20.12.129 255.255.255.192
+ ipv6 address 2001:C:0:1::1/64
+!
+interface Loopback2
+ description Communication Network
+ ip address 172.20.12.65 255.255.255.192
+ ipv6 address 2001:C:0:2::1/64
+!
+interface GigabitEthernet0/0
+ no ip address
+ duplex auto
+ speed auto
+ shutdown
+!
+interface GigabitEthernet0/1
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1.5
+ description Trunk for Vlan 5 APs
+ encapsulation dot1Q 5
+ ip address 172.20.12.25 255.255.255.248
+ ipv6 address 2001:C:0:6::1/64
+!
+interface GigabitEthernet0/1.6
+ description Trunk for Vlan 6 Management
+ encapsulation dot1Q 6
+ ip address 172.20.12.17 255.255.255.248
+ ipv6 address 2001:C:0:7::1/64
+!
+interface GigabitEthernet0/1.30
+ description Trunk for Vlan 30 Staff
+ encapsulation dot1Q 30
+ ip address 172.20.13.129 255.255.255.128
+ ipv6 address 2001:C:0:3::1/64
+!
+interface GigabitEthernet0/1.50
+ description Trunk for Vlan 50 Wireless
+ encapsulation dot1Q 50
+ ip address 172.20.13.1 255.255.255.128
+ ipv6 address 2001:C:0:4::1/64
+!
+interface GigabitEthernet0/1.60
+ description Trunk for Vlan 60 Guests
+ encapsulation dot1Q 60
+ ip address 172.20.12.33 255.255.255.224
+ ipv6 address 2001:C:0:5::1/64
+!
+interface GigabitEthernet0/2
+ no ip address
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/2.103
+ description Connection to RT1-Zg
+ encapsulation dot1Q 103
+ ip address 10.0.0.6 255.255.255.252
+ ipv6 address FE80::103:2 link-local
+!
+interface GigabitEthernet0/2.203
+ description Connection to RT1-St
+ encapsulation dot1Q 203
+ ip address 10.0.0.10 255.255.255.252
+ ipv6 address FE80::203:2 link-local
+!
+!
+!
+banner motd '
+Welcome to RT1-St!'
+!
+!
+!
+!
+!
+!
+line vty 0 4
+ exec-timeout 0 30
+ login local
+ transport input ssh
+!
+!
+!
+end
+
