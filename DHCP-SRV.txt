@@ -84,10 +84,40 @@ interface GigabitEthernet0/0
  speed auto
 !
 interface GigabitEthernet0/0.10
- description Connection to SW1-Zg
+ description Subinterface for Vlan 10
  encapsulation dot1Q 10
  ip address 172.20.0.196 255.255.255.224
  ipv6 address 2001:A:0:6::4/64
+!
+interface GigabitEthernet0/0.20
+ description Subinterface for Administration Network
+ encapsulation dot1Q 20
+ ip address 172.20.3.5 255.255.255.0
+ ipv6 address 2001:A::5/64
+!
+interface GigabitEthernet0/0.30
+ description Subinterface for Staff Network
+ encapsulation dot1Q 30
+ ip address 172.20.2.5 255.255.255.0
+ ipv6 address 2001:A:0:1::5/64
+!
+interface GigabitEthernet0/0.40
+ description Subinterface for VoIP Network
+ encapsulation dot1Q 40
+ ip address 172.20.6.5 255.255.254.0
+ ipv6 address 2001:A:0:2::5/64
+!
+interface GigabitEthernet0/0.50
+ description Subinterface for Wireless Network
+ encapsulation dot1Q 50
+ ip address 172.20.4.5 255.255.254.0
+ ipv6 address 2001:A:0:3::5/64
+!
+interface GigabitEthernet0/0.60
+ description Subinterface for Guests Network
+ encapsulation dot1Q 60
+ ip address 172.20.1.5 255.255.255.0
+ ipv6 address 2001:A:0:4::5/64
 !
 interface GigabitEthernet0/1
  no ip address
@@ -104,6 +134,14 @@ interface GigabitEthernet0/2
 interface Vlan1
  no ip address
  shutdown
+!
+ip route 0.0.0.0 0.0.0.0 172.20.0.193 
+ip route 172.20.0.192 255.255.255.224 172.20.0.193 
+ip route 172.20.3.0 255.255.255.0 172.20.3.1  
+ip route 172.20.2.0 255.255.255.0 172.20.2.1  
+ip route 172.20.6.0 255.255.254.0 172.20.6.1  
+ip route 172.20.4.0 255.255.254.0 172.20.4.1  
+ip route 172.20.1.0 255.255.255.0 172.20.1.1  
 !
 banner motd '
 Welcome to DHCP-SRV!'

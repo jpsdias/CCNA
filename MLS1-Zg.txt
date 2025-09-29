@@ -269,6 +269,7 @@ interface Vlan10
 interface Vlan20
  description Vlan Administration
  ip address 172.20.3.2 255.255.255.0
+ ip helper-address 172.20.3.5
  ipv6 address 2001:A::2/64
  standby 20 ip 172.20.3.1
  standby 20 priority 110
@@ -277,6 +278,7 @@ interface Vlan20
 interface Vlan30
  description Vlan Staff
  ip address 172.20.2.2 255.255.255.0
+ ip helper-address 172.20.2.5
  ipv6 address 2001:A:0:1::2/64
  standby 30 ip 172.20.2.1
  standby 30 priority 110
@@ -285,6 +287,7 @@ interface Vlan30
 interface Vlan40
  description Vlan VoIP
  ip address 172.20.6.2 255.255.254.0
+ ip helper-address 172.20.6.5
  ipv6 address 2001:A:0:2::2/64
  standby 40 ip 172.20.6.1
  standby 40 priority 100
@@ -293,6 +296,7 @@ interface Vlan40
 interface Vlan50
  description Vlan Wireless
  ip address 172.20.4.2 255.255.254.0
+ ip helper-address 172.20.4.5
  ipv6 address 2001:A:0:3::2/64
  standby 50 ip 172.20.4.1
  standby 50 priority 100
@@ -301,6 +305,7 @@ interface Vlan50
 interface Vlan60
  description Vlan Guests
  ip address 172.20.1.2 255.255.255.0
+ ip helper-address 172.20.1.5
  ipv6 address 2001:A:0:4::2/64
  standby 60 ip 172.20.1.1
  standby 60 priority 100
@@ -308,6 +313,7 @@ interface Vlan60
 !
 ip default-gateway 172.20.0.157
 !
+ip route 0.0.0.0 0.0.0.0 172.20.0.157 
 !
 banner motd '
 Welcome to MLS1-Zg!'

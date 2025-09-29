@@ -60,9 +60,9 @@ ip host WLC1-Zg 172.20.0.230
 !
 interface FastEthernet0/1
  description Connection to DHCP-SRV
- switchport access vlan 10
- switchport mode access
- switchport nonegotiate
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 10,20,30,40,50,60
+ switchport mode trunk
 !
 interface FastEthernet0/2
  switchport access vlan 10
