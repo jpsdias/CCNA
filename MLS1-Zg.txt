@@ -14,6 +14,7 @@ enable secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
 !
 ip routing
 !
+ipv6 unicast-routing
 !
 !
 !
@@ -246,70 +247,112 @@ interface Vlan5
  description Vlan APs
  ip address 172.20.0.162 255.255.255.224
  ipv6 address 2001:A:0:7::2/64
+ standby version 2
  standby 5 ip 172.20.0.161
  standby 5 priority 110
  standby 5 preempt
+ standby 15 ipv6 autoconfig
+ standby 15 priority 110
+ standby 15 preempt
 !
 interface Vlan6
  description Vlan Management
  ip address 172.20.0.226 255.255.255.224
  ipv6 address 2001:A:0:5::2/64
+ standby version 2
  standby 6 ip 172.20.0.225
  standby 6 priority 110
  standby 6 preempt
+ standby 16 ipv6 autoconfig
+ standby 16 priority 110
+ standby 16 preempt
 !
 interface Vlan10
  description Vlan Servers
  ip address 172.20.0.194 255.255.255.224
  ipv6 address 2001:A:0:6::2/64
+ standby version 2
  standby 10 ip 172.20.0.193
  standby 10 priority 110
  standby 10 preempt
+ standby 110 ipv6 autoconfig
+ standby 110 priority 110
+ standby 110 preempt
 !
 interface Vlan20
  description Vlan Administration
  ip address 172.20.3.2 255.255.255.0
  ip helper-address 172.20.3.5
  ipv6 address 2001:A::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ standby version 2
  standby 20 ip 172.20.3.1
  standby 20 priority 110
  standby 20 preempt
+ standby 120 ipv6 autoconfig
+ standby 120 priority 110
+ standby 120 preempt
 !
 interface Vlan30
  description Vlan Staff
  ip address 172.20.2.2 255.255.255.0
  ip helper-address 172.20.2.5
  ipv6 address 2001:A:0:1::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ standby version 2
  standby 30 ip 172.20.2.1
  standby 30 priority 110
  standby 30 preempt
+ standby 130 ipv6 autoconfig
+ standby 130 priority 110
+ standby 130 preempt
 !
 interface Vlan40
  description Vlan VoIP
  ip address 172.20.6.2 255.255.254.0
  ip helper-address 172.20.6.5
  ipv6 address 2001:A:0:2::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ standby version 2
  standby 40 ip 172.20.6.1
  standby 40 priority 100
  standby 40 preempt
+ standby 140 ipv6 autoconfig
+ standby 140 priority 100
+ standby 140 preempt
 !
 interface Vlan50
  description Vlan Wireless
  ip address 172.20.4.2 255.255.254.0
  ip helper-address 172.20.4.5
  ipv6 address 2001:A:0:3::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ standby version 2
  standby 50 ip 172.20.4.1
  standby 50 priority 100
  standby 50 preempt
+ standby 150 ipv6 autoconfig
+ standby 150 priority 100
+ standby 150 preempt
 !
 interface Vlan60
  description Vlan Guests
  ip address 172.20.1.2 255.255.255.0
  ip helper-address 172.20.1.5
  ipv6 address 2001:A:0:4::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ standby version 2
  standby 60 ip 172.20.1.1
  standby 60 priority 100
  standby 60 preempt
+ standby 160 ipv6 autoconfig
+ standby 160 priority 100
+ standby 160 preempt
 !
 ip default-gateway 172.20.0.157
 !

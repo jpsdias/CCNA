@@ -11,7 +11,9 @@ enable secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
 !
 !
 !
+ip routing
 !
+ipv6 unicast-routing
 !
 !
 !

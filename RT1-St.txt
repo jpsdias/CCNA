@@ -8,6 +8,9 @@ login block-for 300 attempts 3 within 120
 !
 enable secret 5 $1$mERr$UIEd/gKB8Xu9v11aSkZ1n0
 !
+ip routing
+!
+ipv6 unicast-routing
 !
 ip dhcp excluded-address 172.20.13.128 172.20.13.133
 ip dhcp excluded-address 172.20.13.0 172.20.13.5
@@ -24,6 +27,12 @@ ip dhcp pool Guests-St
  default-router 172.20.12.33
 !
 !
+ipv6 dhcp pool Staff-v6
+ address prefix 2001:C:0:3::/64
+ipv6 dhcp pool Wireless-St-v6
+ address prefix 2001:C:0:4::/64
+ipv6 dhcp pool Guests-St-v6
+ address prefix 2001:C:0:5::/64
 !
 !
 !
@@ -112,18 +121,27 @@ interface GigabitEthernet0/1.30
  encapsulation dot1Q 30
  ip address 172.20.13.129 255.255.255.128
  ipv6 address 2001:C:0:3::1/64
+ ipv6 dhcp server Staff-v6
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
 !
 interface GigabitEthernet0/1.50
  description Trunk for Vlan 50 Wireless
  encapsulation dot1Q 50
  ip address 172.20.13.1 255.255.255.128
  ipv6 address 2001:C:0:4::1/64
+ ipv6 dhcp server Wireless-St-v6
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
 !
 interface GigabitEthernet0/1.60
  description Trunk for Vlan 60 Guests
  encapsulation dot1Q 60
  ip address 172.20.12.33 255.255.255.224
  ipv6 address 2001:C:0:5::1/64
+ ipv6 dhcp server Guests-St-v6
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
 !
 interface GigabitEthernet0/2
  no ip address
