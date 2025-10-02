@@ -50,20 +50,23 @@ ip host RT1-St 10.0.0.6 10.0.0.10
 !
 interface FastEthernet0/1
  description Trunk Zabreg
- switchport trunk allowed vlan 102-103
+ switchport trunk encapsulation dot1Q
  switchport mode trunk
+ switchport trunk allowed vlan 102-103
  no shutdown
 !
 interface FastEthernet0/2
  description Trunk Pula
- switchport trunk allowed vlan 102,203
+ switchport trunk encapsulation dot1Q
  switchport mode trunk
+ switchport trunk allowed vlan 102,203
  no shutdown
 !
 interface FastEthernet0/3
  description Trunk Split
- switchport trunk allowed vlan 103,203
+ switchport trunk encapsulation dot1Q
  switchport mode trunk
+ switchport trunk allowed vlan 103,203
  no shutdown
 !
 interface FastEthernet0/4
