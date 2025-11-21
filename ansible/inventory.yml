@@ -1,0 +1,52 @@
+# =============================================
+# FILE: inventory.yml
+# =============================================
+---
+all:
+  children:
+    layer3:    
+      routers:
+        hosts:
+          RT1-Zg:
+            ansible_host: 10.0.0.18  # Via Gig0/2.102 to RT1-Pl
+          RT1-Pl:
+            ansible_host: 10.0.0.19  # Via Gig0/2.102 to RT1-Zg
+          RT1-St:
+            ansible_host: 10.0.0.20  # Via Gig0/2.103 to RT1-Zg
+      DHCP-SRV:
+        hosts:
+          ansible_host: 172.20.0.196 # Vlan 10 Servers
+    
+    layer23:
+      mls:
+        hosts:
+          MLS1-Zg:
+            ansible_host: 172.20.0.158 # Connected to RT1-Zg Gig0/0
+          MLS2-Zg:
+            ansible_host: 172.20.0.154 # Connected to RT1-Zg Gig0/1
+
+    layer2:
+      access_switches:
+        hosts:
+          SW1-Zg:
+            ansible_host: 172.20.0.228 # Vlan 6 management
+          SW2-Zg:
+            ansible_host: 172.20.0.229 # Vlan 6 management
+          SW1-Pl:
+            ansible_host: 172.20.8.146 # Vlan 6 management
+          SW1-St:
+            ansible_host: 172.20.12.18 # Vlan 6 management
+      wan_switches:
+          SW0:
+            ansible_host: 10.0.0.17  # Update with actual mgmt
+
+
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: cisco.ios.ios
+    ansible_ssh_common_args: '-o Ciphers=+aes256-cbc -o KexAlgorithms=+diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa'
+    ansible_user: cisco
+    ansible_password: "classclass"
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_become_password: "classclass"

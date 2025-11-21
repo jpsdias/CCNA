@@ -1,0 +1,74 @@
+---
+- name: Check Base Configuration All Devices
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Gather router facts
+      cisco.ios.ios_facts:
+        gather_subset:
+          - config
+      register: router_facts
+      tags: check
+
+    - name: Check hostname
+      assert:
+        that:
+          - router_facts.ansible_facts.ansible_net_hostname == hostname
+        success_msg: "✓ Hostname is correct: {{ hostname }}"
+        fail_msg: "✗ Hostname mismatch. Expected: {{ hostname }}, Found: {{ router_facts.ansible_facts.ansible_net_hostname }}"
+      tags: hostname
+
+    - name: Ensure local user exists with secret
+      cisco.ios.ios_user:
+        aggregate:
+          - name: "{{ ansible_user }}"
+            configured_password : "{{ ansible_password }}"
+            password_type: secret
+            privilege: 15
+        update_password: on_create
+        state: present
+      no_log: true
+      tags: user
+
+    - name: Check domain name
+      assert:
+        that:
+          - router_facts.ansible_facts.ansible_net_config is search("(?im)^ip domain-name" + domain_name) or router_facts.ansible_facts.ansible_net_config is search("(?im)^ip domain name" + domain_name)
+        success_msg: "✓ Domain name configured: {{ domain_name }}"
+        fail_msg: "✗ Domain name not found or incorrect"
+      tags: domain_name
+
+    - name: Check no ip domain-lookup
+      assert:
+        that:
+          - router_facts.ansible_facts.ansible_net_config is search("(?im)^no ip domain-lookup") or router_facts.ansible_facts.ansible_net_config is search("(?im)^no ip domain lookup")
+        success_msg: "✓ IP domain-lookup is disabled"
+        fail_msg: "✗ IP domain-lookup should be disabled"
+      tags: domain_lookup
+
+    - name: Check SSH version
+      assert:
+        that:
+          - "'ip ssh version {{ ssh_version }}' in router_facts.ansible_facts.ansible_net_config"
+        success_msg: "✓ SSH version 2 is configured"
+        fail_msg: "✗ SSH version 2 not configured"
+      tags: ssh
+
+    - name: Verify VTY configuration
+      assert:
+        that:
+          #- "'exec-timeout {{ security.exec_timeout_min }} {{ security.exec_timeout_sec }}' in router_facts.ansible_facts.ansible_net_config"
+          - "'login local' in router_facts.ansible_facts.ansible_net_config"
+          - "'transport input ssh' in router_facts.ansible_facts.ansible_net_config"
+        success_msg: "✓ VTY lines configured correctly"
+        fail_msg: "✗ VTY configuration issues detected"
+      tags: vty
+
+    - name: Verify enable secret exists
+      assert:
+        that:
+          - "'enable secret' in router_facts.ansible_facts.ansible_net_config"
+        success_msg: "✓ Enable secret is configured"
+        fail_msg: "✗ Enable secret not found"
+      tags: enable

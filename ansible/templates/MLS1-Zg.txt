@@ -1,0 +1,39 @@
+sh sdm prefer
+!
+conf t
+!
+sdm prefer ideal ipv4-and-ipv6 default
+!
+end
+!
+wr
+!
+reload
+--------------------
+
+no ip domain-lookup
+!
+hostname MLS1-Zg
+!
+ip domain-name isepacademy.ccna.itn.com
+!
+interface FastEthernet0/1
+ description Connection to RT1-Zg
+ no switchport
+ ip address 172.20.0.158 255.255.255.252
+ ipv6 address 2001:A:0:8::2/64
+ no shutdown
+!
+enable secret classclass
+!
+username cisco secret classclass
+!
+ip ssh version 2
+!
+line vty 0 4
+ login local
+ transport input ssh
+!
+ip route 0.0.0.0 0.0.0.0 172.20.0.157
+!
+end
