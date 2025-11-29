@@ -1,0 +1,11 @@
+---
+- name: Deploy Security All Devices
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Configure VTY lines for SSH access
+      cisco.ios.ios_config:
+        parents: "line vty 0 4"
+        lines:
+          - exec-timeout {{ security.exec_timeout_min }} {{ security.exec_timeout_sec }}

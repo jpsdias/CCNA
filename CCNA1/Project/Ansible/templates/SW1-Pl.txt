@@ -1,0 +1,43 @@
+sh sdm prefer
+!
+conf t
+!
+sdm prefer ideal ipv4-and-ipv6 default
+!
+end
+!
+wr
+!
+reload
+--------------------
+
+no ip domain-lookup
+!
+hostname SW1-Pl
+!
+ip domain-name isepacademy.ccna.itn.com
+!
+interface GigabitEthernet0/2
+ description Connection to RT1-Pl
+ no shutdown
+!
+interface Vlan1
+ description SVI Pula
+ ip address 172.20.4.125 255.255.255.192
+ ipv6 address 2001:B:0:3::2/64
+ no shutdown
+!
+enable secret class
+!
+username cisco secret class
+!
+ip ssh version 2
+!
+line vty 0 4
+ login local
+ transport input ssh
+!
+ip default-gateway 172.20.4.126
+ip route 0.0.0.0 0.0.0.0 172.20.4.126
+!
+end

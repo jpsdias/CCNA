@@ -1,0 +1,115 @@
+---
+- name: Test Pings
+  hosts: all
+  gather_facts: no
+  
+  tasks:
+    - name: Test reachability to RT1-Zg (Gig0/0)
+      cisco.ios.ios_ping:
+        dest: 10.0.0.1
+      tags: rt1_zg
+
+    - name: Test reachability to RT1-Zg (Gig0/1)
+      cisco.ios.ios_ping:
+        dest: 10.0.0.5
+      tags: rt1_zg
+    
+    - name: Test reachability to RT1-Zg (Gig0/2)
+      cisco.ios.ios_ping:
+        dest: 172.20.0.126
+      tags: rt1_zg
+
+    - name: Test reachability to RT1-Zg (Lo0)
+      cisco.ios.ios_ping:
+        dest: 172.20.0.254
+      tags: rt1_zg
+
+    - name: Test reachability to SW1-Zg (Management Interface)
+      cisco.ios.ios_ping:
+        dest: 172.20.0.125
+      tags: sw1_zg
+
+    - name: PCA
+      cisco.ios.ios_ping:
+        dest: 172.20.0.1
+      tags: host_zh
+    
+    - name: Test reachability to RT1-Pl (Gig0/0)
+      cisco.ios.ios_ping:
+        dest: 10.0.0.2
+      tags: rt1_pl
+
+    - name: Test reachability to RT1-Pl (Gig0/1)
+      cisco.ios.ios_ping:
+        dest: 10.0.0.9
+      tags: rt1_pl
+
+    - name: Test reachability to RT1-Pl (Gig0/2)
+      cisco.ios.ios_ping:
+        dest: 172.20.4.126
+      tags: rt1_pl
+
+    - name: Test reachability to RT1-Pl (Lo0 Engineering)
+      cisco.ios.ios_ping:
+        dest: 172.20.5.254
+      tags: rt1_pl
+
+    - name: Test reachability to RT1-Pl (Lo1 Design)
+      cisco.ios.ios_ping:
+        dest: 172.20.4.62
+      tags: rt1_pl
+
+    - name: Test reachability to RT1-Pl (Lo2 Communication)
+      cisco.ios.ios_ping:
+        dest: 172.20.4.254
+      tags: rt1_pl
+
+    - name: Test reachability to SW1-Pl (Management Interface)
+      cisco.ios.ios_ping:
+        dest: 172.20.4.125
+      tags: sw1_pl
+
+    - name: PCB
+      cisco.ios.ios_ping:
+        dest: 172.20.4.65
+      tags: host_pl
+
+    - name: Test reachability to RT1-St (Gig0/0)
+      cisco.ios.ios_ping:
+        dest: 10.0.0.6
+      tags: rt1_st
+
+    - name: Test reachability to RT1-St (Gig0/1)
+      cisco.ios.ios_ping:
+        dest: 10.0.0.10
+      tags: rt1_st
+
+    - name: Test reachability to RT1-St (Gig0/2)
+      cisco.ios.ios_ping:
+        dest: 172.20.9.254
+      tags: rt1_st
+
+    - name: Test reachability to RT1-St (Lo0 Multimedia)
+      cisco.ios.ios_ping:
+        dest: 172.20.8.126
+      tags: rt1_st
+
+    - name: Test reachability to RT1-St (Lo1 Design)
+      cisco.ios.ios_ping:
+        dest: 172.20.8.62
+      tags: rt1_st
+
+    - name: Test reachability to RT1-St (Lo2 Communication)
+      cisco.ios.ios_ping:
+        dest: 172.20.8.254
+      tags: rt1_st
+
+    - name: Test reachability to SW1-St (Management Interface)
+      cisco.ios.ios_ping:
+        dest: 172.20.9.253
+      tags: sw1_st
+
+    - name: PCC
+      cisco.ios.ios_ping:
+        dest: 172.20.9.1
+      tags: host_st

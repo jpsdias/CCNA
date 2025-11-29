@@ -1,0 +1,56 @@
+---
+
+domain_name: isepacademy.ccna.itn.com
+ssh_version: 2
+
+# INTERFACE NAMING CONVENTION
+# Set to 'real' for physical lab or 'pnet' for Pnet
+interface_type: "pnet" # options: 'real' or 'pnet' 
+
+security:
+  min_password_length: 10
+  login_block_for: 300
+  login_attempts: 3
+  login_within: 120
+  exec_timeout_min: 0
+  exec_timeout_sec: 30
+
+ip_hosts:
+  # Zagreb
+  - name: RT1-Zg
+    ip: 10.0.0.1
+    ipv6: 2001:D::1
+
+  - name: SW1-Zg
+    ip: 172.20.0.125
+    ipv6: 2001:A::2
+
+  - name: PCA
+    ip: 172.20.0.1
+    ipv6: 2001:A::3
+
+  # Pula
+  - name: RT1-Pl
+    ip:  10.0.0.2
+    ipv6: 2001:D::2
+
+  - name: SW1-Pl
+    ip: 172.20.4.125
+    ipv6: 2001:B:0:3::2
+
+  - name: PCB
+    ip: 172.20.4.65
+    ipv6: 2001:B:0:3::3
+    
+  # Split
+  - name: RT1-St
+    ip:  10.0.0.6
+    ipv6: 2001:E::2
+
+  - name: SW1-St
+    ip: 172.20.9.253
+    ipv6: 2001:C::2
+
+  - name: PCC
+    ip: 172.20.9.1
+    ipv6: 2001:C::3

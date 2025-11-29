@@ -1,0 +1,26 @@
+no ip domain-lookup
+!
+hostname RT1-Pl
+!
+ip domain-name isepacademy.ccna.itn.com
+!
+interface GigabitEthernet0/0
+ description Link Pula-Zagreb
+ ip address 10.0.0.2 255.255.255.252
+ ipv6 address FE80:0:0:D::2 link-local
+ ipv6 address 2001:D::2/64
+ no shutdown
+!
+enable secret class
+!
+username cisco secret class
+!
+ip ssh version 2
+!
+line vty 0 4
+ login local
+ transport input ssh
+!
+ip route 0.0.0.0 0.0.0.0 10.0.0.1
+!
+end

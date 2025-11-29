@@ -1,0 +1,50 @@
+---
+hostname: SW1-St
+
+default_gateway: 172.20.9.254
+
+l2_interfaces:
+  - name: "{{ sInt['Fa0/1'] }}"
+    description: "Connection to PCC"
+    access:
+      vlan: 1
+
+  - name: "{{ sInt['Gig0/2'] }}"
+    description: "Connection to RT1-St"
+    access:
+      vlan: 1
+
+svis:
+  - vlan_id: 1
+    description: "SVI Split"
+    ipv4:
+      address: 172.20.9.253
+      prefix: 24
+    ipv6:
+      address: "2001:C::2/64"
+
+unused_interfaces:
+  - "{{ sInt['Fa0/2'] }}"
+  - "{{ sInt['Fa0/3'] }}"
+  - "{{ sInt['Fa0/4'] }}"
+  - "{{ sInt['Fa0/5'] }}"
+  - "{{ sInt['Fa0/6'] }}"
+  - "{{ sInt['Fa0/7'] }}"
+  - "{{ sInt['Fa0/8'] }}"
+  - "{{ sInt['Fa0/9'] }}"
+  - "{{ sInt['Fa0/10'] }}"
+  - "{{ sInt['Fa0/11'] }}"
+  - "{{ sInt['Fa0/12'] }}"
+  - "{{ sInt['Fa0/13'] }}"
+  - "{{ sInt['Fa0/14'] }}"
+  - "{{ sInt['Fa0/15'] }}"
+  - "{{ sInt['Fa0/16'] }}"
+  - "{{ sInt['Fa0/17'] }}"
+  - "{{ sInt['Fa0/18'] }}"
+  - "{{ sInt['Fa0/19'] }}"
+  - "{{ sInt['Fa0/20'] }}"
+  - "{{ sInt['Fa0/21'] }}"
+  - "{{ sInt['Fa0/22'] }}"
+  - "{{ sInt['Fa0/23'] }}"
+  - "{{ sInt['Fa0/24'] }}"
+  - "{{ sInt['Gig0/1'] }}"

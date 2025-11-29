@@ -1,0 +1,181 @@
+---
+hostname: MLS2-Zg
+
+l3_interfaces:
+  - name: "{{ mInt['Fa0/1'] }}"
+    description: "Connection to RT1-Zg"
+    ipv4: 
+      address: 172.20.0.154
+      prefix: 30
+    ipv6: 
+      address: "2001:A:0:8::3/64"
+
+l2_interfaces:
+  - name: "{{ mInt['Fa0/2'] }}"
+    description: "Port-Channel 1 member"
+    trunk:
+      native_vlan: 7
+      allowed_vlans: "5-6,10,20,30,40,50,60"
+      nonegotiate: false
+    channel:
+      group: 1
+    
+  - name: "{{ mInt['Fa0/3'] }}"
+    description: "Port-Channel 1 member"
+    trunk:
+      native_vlan: 7
+      allowed_vlans: "5-6,10,20,30,40,50,60"
+      nonegotiate: false
+    channel:
+      group: 1
+
+  - name: "{{ mInt['Fa0/4'] }}"
+    description: "Connection to SW1-Zg"
+    trunk:
+      native_vlan: 7
+      allowed_vlans: "5-6,10,20,30,40,50,60"
+      nonegotiate: false
+    
+  - name: "{{ mInt['Fa0/5'] }}"
+    description: "Connection to SW2-Zg"
+    trunk:
+      native_vlan: 7
+      allowed_vlans: "5-6,10,20,30,40,50,60"
+      nonegotiate: false
+
+svis:
+  - vlan_id: 5
+    description: "Vlan APs"
+    ipv4: 
+      address: 172.20.0.163
+      prefix: 27
+    ipv6: 
+      address: "2001:A:0:7::3/64"
+    hsrp:
+      ipv4:
+        group: 5
+        address: 172.20.0.161
+      ipv6:  
+        group: 15
+      priority: 100
+    
+  - vlan_id: 6
+    description: "Vlan Management"
+    ipv4: 
+      address: 172.20.0.227
+      prefix: 27
+    ipv6: 
+      address: "2001:A:0:5::3/64"
+    hsrp:
+      ipv4:
+        group: 6
+        address: 172.20.0.225
+      ipv6:
+        group: 16
+      priority: 100
+
+  - vlan_id: 10
+    description: "Vlan Servers"
+    ipv4: 
+      address: 172.20.0.195
+      prefix: 27
+    ipv6:
+      address: "2001:A:0:6::3/64"
+    hsrp:
+      ipv4:
+        group: 10
+        address: 172.20.0.193
+      ipv6:
+        group: 110
+      priority: 100
+    
+  - vlan_id: 20
+    description: "Vlan Administration"
+    ipv4:
+      address: "172.20.3.3"
+      prefix: 24
+      helper_address: "172.20.3.5"
+    ipv6: 
+      address: "2001:A::3/64"
+      nd_flags: true
+    hsrp:
+      ipv4:
+        group: 20
+        address: "172.20.3.1"
+      ipv6:
+        group: 120
+      priority: 100
+    
+  - vlan_id: 30
+    description: "Vlan Staff"
+    ipv4: 
+      address: "172.20.2.3"
+      prefix: 24
+      helper_address: "172.20.2.5"
+    ipv6: 
+      address: "2001:A:0:1::3/64"
+      nd_flags: true
+    hsrp:
+      ipv4:    
+        group: 30
+        address: "172.20.2.1"
+      ipv6:
+        group: 130
+      priority: 100
+    
+  - vlan_id: 40
+    description: "Vlan VoIP"
+    ipv4: 
+      address: "172.20.6.3"
+      prefix: 23
+      helper_address: "172.20.6.5"
+    ipv6: 
+      address: "2001:A:0:2::3/64"
+      nd_flags: true
+    hsrp:
+      ipv4:
+        group: 40
+        address: "172.20.6.1"
+      ipv6:
+        group: 140
+      priority: 110
+    
+  - vlan_id: 50
+    description: "Vlan Wireless"
+    ipv4: 
+      address: "172.20.4.3"
+      prefix: 23
+      helper_address: "172.20.4.5"
+    ipv6: 
+      address: "2001:A:0:3::3/64"
+      nd_flags: true
+    hsrp:
+      ipv4:
+        group: 50
+        address: "172.20.4.1"
+      ipv6:
+        group: 150
+      priority: 110
+    
+  - vlan_id: 60
+    description: "Vlan Guests"
+    ipv4: 
+      address: "172.20.1.3"
+      prefix: 24
+      helper_address: "172.20.1.5"
+    ipv6: 
+      address: "2001:A:0:4::3/64"
+      nd_flags: true
+    hsrp:
+      ipv4:
+        group: 60
+        address: "172.20.1.1"
+      ipv6:
+        group: 160
+      priority: 110
+
+stp:
+  root_primary: "40,50,60"
+  root_secondary: "5-6,10,20,30"
+
+default_gateway: 172.20.0.153

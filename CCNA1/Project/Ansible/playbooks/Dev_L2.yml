@@ -1,0 +1,85 @@
+---
+- name: Deploy Layer 2 Devices (Switches)
+  hosts: layer2
+  gather_facts: no
+
+  pre_tasks:
+    - import_tasks: preTasks.yml
+
+  tasks:
+    - name: SVI Interfaces - General
+      cisco.ios.ios_interfaces:
+        config:
+          - name: "Vlan{{ item.vlan_id }}"
+            description: "{{ item.description }}"
+            enabled: True
+        state: merged
+      loop: "{{ svis }}"
+      when: 
+        - svis is defined
+        - item.vlan_id not in (management_vlan | default([]))
+      tags: svis
+
+    - name: SVI Interfaces - IPs
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: "Vlan{{ item.vlan_id }}"
+            ipv4:
+              - address: "{{ item.ipv4.address }}/{{ item.ipv4.prefix }}"
+            ipv6:
+              - address: "{{ item.ipv6.address | default(omit) }}"
+                link_local: "{{ item.ipv6.link_local if item.ipv6.link_local is defined else omit }}"
+        state: merged
+      loop: "{{ svis }}"
+      when: 
+        - svis is defined
+        - item.vlan_id not in (management_vlan | default([]))
+      tags: svis
+
+    - name: Access Ports - Vlan
+      cisco.ios.ios_l2_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            mode: access
+            access:
+              vlan: "{{ item.access.vlan }}"
+        state: merged
+      loop: "{{ l2_interfaces }}"
+      when: 
+        - item.access is defined
+        - item.name not in (management_interface | default([]))
+      tags: l2_interfaces, access_ports
+
+    - name: L2 Interfaces - General
+      cisco.ios.ios_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            description: "{{ item.description | default(omit) }}"
+            enabled: True
+        state: merged
+      loop: "{{ l2_interfaces }}"
+      when: item.name not in (management_interface | default([]))
+      tags: l2_interfaces
+
+    - name: Configure IP Host Entries
+      cisco.ios.ios_config:
+        lines:
+          - "ip host {{ item.name }} {{ item.ip }}"
+      loop: "{{ ip_hosts | default([]) }}"
+      when: ip_hosts is defined
+      diff: yes
+      tags: hosts
+
+    - name: Configure IPV6 Host Entries
+      cisco.ios.ios_config:
+        lines:
+          - "ipv6 host {{ item.name }} {{ item.ipv6 }}"
+      loop: "{{ ip_hosts | default([]) }}"
+      when: ip_hosts is defined
+      diff: yes
+      tags: hosts
+
+    - name: Save Configuration
+      cisco.ios.ios_config:
+        save_when: always
+      tags: save

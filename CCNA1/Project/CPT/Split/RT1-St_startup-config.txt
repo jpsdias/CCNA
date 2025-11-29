@@ -1,0 +1,120 @@
+!
+version 15.1
+service password-encryption
+security passwords min-length 5
+!
+hostname RT1-St
+!
+login block-for 300 attempts 3 within 120
+!
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+!
+!
+!
+ipv6 unicast-routing
+!
+!
+!
+username cisco secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+ip ssh version 2
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Multimedia Network
+ ip address 172.20.8.126 255.255.255.192
+ ipv6 address 2001:C:0:3::1/64
+!
+interface Loopback1
+ description Design Network
+ ip address 172.20.8.62 255.255.255.192
+ ipv6 address 2001:C:0:1::1/64
+!
+interface Loopback2
+ description Communication Network
+ ip address 172.20.8.254 255.255.255.128
+ ipv6 address 2001:C:0:2::1/64
+!
+interface GigabitEthernet0/0
+ description Link Split-Zagreb
+ ip address 10.0.0.6 255.255.255.252
+ duplex auto
+ speed auto
+ ipv6 address FE80:0:0:E::2 link-local
+ ipv6 address 2001:E::2/64
+!
+interface GigabitEthernet0/1
+ description Link Split-Pula
+ ip address 10.0.0.10 255.255.255.252
+ duplex auto
+ speed auto
+ ipv6 address FE80:0:0:F::2 link-local
+ ipv6 address 2001:F::2/64
+!
+interface GigabitEthernet0/2
+ description Engineering Network
+ ip address 172.20.9.254 255.255.255.0
+ duplex auto
+ speed auto
+ ipv6 address 2001:C::1/64
+!
+!
+ip route 0.0.0.0 0.0.0.0 10.0.0.5 
+ip route 172.20.0.0 255.255.255.128 10.0.0.5 
+ip route 172.20.0.128 255.255.255.128 10.0.0.5 
+ip route 172.20.5.0 255.255.255.0 10.0.0.9
+ip route 172.20.4.0 255.255.255.192 10.0.0.9 
+ip route 172.20.4.128 255.255.255.128 10.0.0.9
+ip route 172.20.4.64 255.255.255.192 10.0.0.9 
+!
+!
+ipv6 route ::/0 2001:E::1
+ipv6 route 2001:A::/64 2001:E::1
+ipv6 route 2001:A:0:1::/64 2001:E::1
+ipv6 route 2001:B:0:3::/64 2001:F::1
+ipv6 route 2001:B::/64 2001:F::1
+ipv6 route 2001:B:0:1::/64 2001:F::1
+ipv6 route 2001:B:0:2::/64 2001:F::1
+!
+!
+banner motd #
+Welcome to RT1-St!#
+!
+!
+!
+!
+line con 0
+!
+line aux 0
+!
+line vty 0 1
+ exec-timeout 0 30
+ login local
+ transport input ssh
+!
+!
+!
+end
+

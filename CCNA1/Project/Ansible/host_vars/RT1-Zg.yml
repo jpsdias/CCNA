@@ -1,0 +1,58 @@
+---
+hostname: RT1-Zg
+
+l3_interfaces:
+  - name: "{{ rInt['Gig0/0'] }}"
+    description: "Connection to Pula"
+    ipv4:
+      address: 10.0.0.1
+      prefix: 30
+    ipv6:
+      address: "2001:D::1/64"
+      link_local: "FE80:0:0:D::1/64"
+  
+  - name: "{{ rInt['Gig0/1'] }}"
+    description: "Connection to Split"
+    ipv4:
+      address: 10.0.0.5
+      prefix: 30
+    ipv6:
+      address: "2001:E::1/64"
+      link_local: "FE80:0:0:E::1/64"
+
+  - name: "{{ rInt['Gig0/2'] }}"
+    description: "Administration Network"
+    ipv4:
+      address: 172.20.0.126
+      prefix: 25
+    ipv6:
+      address: "2001:A::1/64"
+
+  - name: Loopback0
+    description: "Accounting Network"
+    ipv4: 
+      address: 172.20.0.254
+      prefix: 25
+    ipv6:
+      address: "2001:A:0:1::1/64"
+
+static_routes:
+  # Default routes
+  - dest: "0.0.0.0"
+    prefix: 0
+    next_hop: "10.0.0.2"
+  
+  # Zagreb internal network
+  - dest: "172.20.0.0"
+    prefix: 22
+    next_hop: "172.20.0.126"
+
+  # Pula network
+  - dest: "172.20.4.0"
+    prefix: 22
+    next_hop: "10.0.0.2"
+  
+  # Split network
+  - dest: "172.20.8.0"
+    prefix: 22
+    next_hop: "10.0.0.6"

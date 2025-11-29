@@ -1,0 +1,274 @@
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname SW2-Zg
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$NFhO$yY0N8LPiazAKwMOAU7exo1
+!
+username cisco privilege 15 secret 5 $1$hehI$d/DAh4JBoc6PbwCegNvE8.
+no aaa new-model
+system mtu routing 1500
+!
+!
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+ip host SW0 10.0.0.17
+ip host RT1-Zg 10.0.0.1
+ip host MLS1-Zg 172.20.0.158
+ip host MLS2-Zg 172.20.0.154
+ip host SW1-Zg 172.20.0.228
+ip host SW2-Zg 172.20.0.229
+ip host WLC1-Zg 172.20.0.230
+ip host AP1-Zg 172.20.0.165
+ip host DHCP-SRV 172.20.0.196
+ip host PCA 172.20.3.6
+ip host PCB 172.20.2.6
+ip host RT1-Pl 10.0.0.2
+ip host SW1-Pl 172.20.8.146
+ip host AP1-Pl 172.20.8.154
+ip host PCC 172.20.9.6
+ip host RT1-St 10.0.0.6
+ip host SW1-St 172.20.12.18
+ip host AP1-St 172.20.12.16
+ip host PCD 172.20.13.134
+login block-for 300 attempts 3 within 120
+!
+!         
+crypto pki trustpoint TP-self-signed-2721833344
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2721833344
+ revocation-check none
+ rsakeypair TP-self-signed-2721833344
+!
+!
+crypto pki certificate chain TP-self-signed-2721833344
+ certificate self-signed 01
+  3082022B 30820194 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 32373231 38333333 3434301E 170D3933 30333031 30303031 
+  30305A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 37323138 
+  33333334 3430819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281 
+  8100E097 325A159A 8306C902 E1F38BF5 327541B3 27E01539 72AAECDC 2F6341BD 
+  31FC936C 936D38AC E254DD06 1D14FD8F A1E7E882 30F71ED9 8830BE1F 27337075 
+  B7AB4500 1DDADC88 3A5BE641 C51BC4C3 3CB28671 3CC90F86 D0246446 303E6DBE 
+  F5C7ACBA E20FFB3C 8F16533C 6706119A CD9D1046 7A43C25D 611258E0 A63CB7F6 
+  8EDF0203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 301F0603 
+  551D2304 18301680 145C47AF B5A4E777 AA9C2B99 276748B2 3A48F20A D9301D06 
+  03551D0E 04160414 5C47AFB5 A4E777AA 9C2B9927 6748B23A 48F20AD9 300D0609 
+  2A864886 F70D0101 05050003 81810022 438B559E AB6A5260 C6C7103C 889ACD9B 
+  57B924FA 21BFF233 51F01942 94CBD73B C5A83941 7B5FFF84 AA073C78 7CCA6B5A 
+  8E3D9ED7 67348F5E 64D1BC7B 194AFEA7 5257BC69 FFF9075C ECD80E15 49789676 
+  48E6023F C4A0956F 9F6B62E6 35006AAC 9A52B00E 4E4E3B82 C0500BBE FFE264D8 
+  29AC4CB5 A2FEDA45 C6ABB060 FD27BF
+        quit
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+ip ssh version 2
+!
+!
+!
+!
+!         
+interface FastEthernet0/1
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/2
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/3
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/4
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/5
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/6
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/7
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/8
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/9
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/10
+ switchport access vlan 20
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/11
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!         
+interface FastEthernet0/12
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/13
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/14
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/15
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/16
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/17
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/18
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/19
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/20
+ description Connection to PCB
+ switchport access vlan 30
+ switchport mode access
+ switchport voice vlan 40
+ spanning-tree portfast
+!
+interface FastEthernet0/21
+ description Connection to AP1-Zg
+ switchport trunk native vlan 5
+ switchport trunk allowed vlan 5,50,60
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface FastEthernet0/22
+ switchport trunk native vlan 5
+ switchport trunk allowed vlan 5,50,60
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface FastEthernet0/23
+ description Connection to WLC1-Zg
+ switchport trunk native vlan 6
+ switchport trunk allowed vlan 5,6,50,60
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface FastEthernet0/24
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface GigabitEthernet0/1
+ description Connection to MLS1-Zg
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport mode trunk
+ switchport nonegotiate
+!         
+interface GigabitEthernet0/2
+ description Connection to MLS2-Zg
+ switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan6
+ description Management Interface
+ ip address 172.20.0.229 255.255.255.224
+ ipv6 address 2001:A:0:5::5/64
+!
+ip default-gateway 172.20.0.225
+ip http server
+ip http secure-server
+!
+!
+!         
+vstack
+banner motd ^C
+Welcome to SW2-Zg!
+^C
+!
+line con 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login
+!
+end

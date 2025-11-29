@@ -1,0 +1,38 @@
+# =============================================
+# FILE: inventory.yml
+# =============================================
+---
+all:
+  children:
+
+    layer3:
+      children:
+        routers:
+          hosts:
+            RT1-Zg:
+              ansible_host: 10.0.0.1
+            RT1-Pl:
+              ansible_host: 10.0.0.2
+            RT1-St:
+              ansible_host: 10.0.0.6
+
+    layer2:
+      children:
+        access_switches:
+          hosts:
+            SW1-Zg:
+              ansible_host: 172.20.0.125
+            SW1-Pl:
+              ansible_host: 172.20.4.125
+            SW1-St:
+              ansible_host: 172.20.9.253
+
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: cisco.ios.ios
+    ansible_ssh_common_args: '-o Ciphers=+aes256-cbc -o KexAlgorithms=+diffie-hellman-group1-sha1 -o HostKeyAlgorithms=+ssh-rsa'
+    ansible_user: cisco
+    ansible_password: "class"
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_become_password: "class"

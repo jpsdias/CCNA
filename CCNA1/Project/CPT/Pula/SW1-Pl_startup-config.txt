@@ -1,0 +1,103 @@
+!
+version 15.0
+service password-encryption
+!
+hostname SW1-Pl
+!
+!
+enable secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+ip ssh version 2
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+!
+username cisco secret 5 $1$mERr$9cTjUIEqNGurQiFU.ZeCi1
+!
+!
+!
+!
+interface FastEthernet0/1
+ description Link SW-PC
+ switchport mode access
+!
+interface FastEthernet0/2
+!
+interface FastEthernet0/3
+!
+interface FastEthernet0/4
+!
+interface FastEthernet0/5
+!
+interface FastEthernet0/6
+!
+interface FastEthernet0/7
+!
+interface FastEthernet0/8
+!
+interface FastEthernet0/9
+!
+interface FastEthernet0/10
+!
+interface FastEthernet0/11
+!
+interface FastEthernet0/12
+!
+interface FastEthernet0/13
+!
+interface FastEthernet0/14
+!
+interface FastEthernet0/15
+!
+interface FastEthernet0/16
+!
+interface FastEthernet0/17
+!
+interface FastEthernet0/18
+!
+interface FastEthernet0/19
+!
+interface FastEthernet0/20
+!
+interface FastEthernet0/21
+!
+interface FastEthernet0/22
+!
+interface FastEthernet0/23
+!
+interface FastEthernet0/24
+!
+interface GigabitEthernet0/1
+ description Link SW-RT
+ switchport mode access
+!
+interface GigabitEthernet0/2
+!
+interface Vlan1
+ description Vlan Pula
+ ip address 172.20.4.125 255.255.255.192
+ ipv6 address 2001:B:0:3::2/64
+!
+ip default-gateway 172.20.4.126
+!
+banner motd #
+Welcome to SW1-Pl!#
+!
+!
+!
+ipv6 unicast-routing 
+!
+!
+line con 0
+!
+line vty 0 1
+ exec-timeout 0 30
+ login local
+ transport input ssh
+!
+!
+!
+!
+end
+
