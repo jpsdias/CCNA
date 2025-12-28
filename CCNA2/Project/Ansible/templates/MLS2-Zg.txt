@@ -17,7 +17,7 @@ hostname MLS2-Zg
 !
 ip domain-name isepacademy.ccna.itn.com
 !
-interface FastEthernet0/1
+interface GigabitEthernet1/0/1
  description Connection to RT1-Zg
  no switchport
  ip address 172.20.0.154 255.255.255.252

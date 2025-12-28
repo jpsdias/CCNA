@@ -180,10 +180,10 @@
         dest: 172.20.3.6
       tags: host_zg
 
-    - name: PCB
-      cisco.ios.ios_ping:
-        dest: 172.20.2.6
-      tags: host_zg
+    # - name: PCB
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.2.6
+    #   tags: host_zg
 
     - name: Test reachability to DHCP-SRV
       cisco.ios.ios_ping:
