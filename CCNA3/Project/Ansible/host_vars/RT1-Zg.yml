@@ -1,0 +1,162 @@
+---
+hostname: RT1-Zg
+
+l3_interfaces:
+  - name: "{{ rInt['Gig0/0'] }}"
+    description: "Connection to MLS1-Zg"
+    ipv4:
+      address: 172.20.0.157
+      prefix: 30
+    ipv6:
+      address: "2001:A:0:8::1/64"
+  
+  - name: "{{ rInt['Gig0/1'] }}"
+    description: "Connection to MLS2-Zg"
+    ipv4:
+      address: 172.20.0.153
+      prefix: 30
+    ipv6:
+      address: "2001:A:0:9::1/64"
+
+subinterfaces:
+  - parent: "{{ rInt['Gig0/2'] }}"
+    vlan: 102
+    description: "Connection to RT1-Pl"
+    ipv4:
+      address: 10.0.0.1
+      prefix: 30
+    ipv6:
+      address: "FE80::102:1"
+      link_local: True
+  
+  - parent: "{{ rInt['Gig0/2'] }}"
+    vlan: 103
+    description: "Connection to RT1-St"
+    ipv4:
+      address: 10.0.0.5
+      prefix: 30
+    ipv6:
+      address: "FE80::103:1"
+      link_local: True
+
+  - parent: "{{ rInt['Gig0/2'] }}"
+    vlan: 6
+    description: "Management RT1-Zg"
+    ipv4:
+      address: 10.0.0.18
+      prefix: 29
+    ipv6:
+      address: "FE80::6:2"
+      link_local: True
+
+static_routes:
+  # Default routes
+  - dest: "0.0.0.0"
+    prefix: 0
+    next_hop: "10.0.0.2"
+    ad: 5
+  - dest: "0.0.0.0"
+    prefix: 0
+    next_hop: "10.0.0.6"
+    ad: 10
+  
+  # Pula network
+  - dest: "172.20.8.0"
+    prefix: 22
+    next_hop: "10.0.0.2"
+    ad: 1
+  - dest: "172.20.8.0"
+    prefix: 22
+    next_hop: "10.0.0.6"
+    ad: 5
+  
+  # Split network
+  - dest: "172.20.12.0"
+    prefix: 23
+    next_hop: "10.0.0.6"
+    ad: 1
+  - dest: "172.20.12.0"
+    prefix: 23
+    next_hop: "10.0.0.2"
+    ad: 5
+  
+  # Zagreb internal networks via MLS
+  # APs
+  - dest: "172.20.0.160"
+    prefix: 27
+    next_hop: "172.20.0.158"
+    ad: 1
+  - dest: "172.20.0.160"
+    prefix: 27
+    next_hop: "172.20.0.154"
+    ad: 5
+
+  # Management
+  - dest: "172.20.0.224"
+    prefix: 27
+    next_hop: "172.20.0.158"
+    ad: 1
+  - dest: "172.20.0.224"
+    prefix: 27
+    next_hop: "172.20.0.154"
+    ad: 5
+
+  # Servers
+  - dest: "172.20.0.192"
+    prefix: 27
+    next_hop: "172.20.0.158"
+    ad: 1
+  - dest: "172.20.0.192"
+    prefix: 27
+    next_hop: "172.20.0.154"
+    ad: 5
+
+  # Administration
+  - dest: "172.20.3.0"
+    prefix: 24
+    next_hop: "172.20.0.158"
+    ad: 1
+  - dest: "172.20.3.0"
+    prefix: 24
+    next_hop: "172.20.0.154"
+    ad: 5
+
+  # Staff
+  - dest: "172.20.2.0"
+    prefix: 24
+    next_hop: "172.20.0.158"
+    ad: 1
+  - dest: "172.20.2.0"
+    prefix: 24
+    next_hop: "172.20.0.154"
+    ad: 5
+
+  # VoIP
+  - dest: "172.20.6.0"
+    prefix: 23
+    next_hop: "172.20.0.154"
+    ad: 1
+  - dest: "172.20.6.0"
+    prefix: 23
+    next_hop: "172.20.0.158"
+    ad: 5
+
+  # Wireless
+  - dest: "172.20.4.0"
+    prefix: 23
+    next_hop: "172.20.0.154"
+    ad: 1
+  - dest: "172.20.4.0"
+    prefix: 23
+    next_hop: "172.20.0.158"
+    ad: 5
+
+  # Guests
+  - dest: "172.20.1.0"
+    prefix: 24
+    next_hop: "172.20.0.154"
+    ad: 1
+  - dest: "172.20.1.0"
+    prefix: 24
+    next_hop: "172.20.0.158"
+    ad: 5

@@ -1,0 +1,110 @@
+---
+
+domain_name: isepacademy.ccna.itn.com
+ssh_version: 2
+
+# INTERFACE NAMING CONVENTION
+# Set to 'real' for physical lab or 'pnet' for Pnet
+interface_type: "real" # options: 'real' or 'pnet' 
+
+security:
+  min_password_length: 10
+  login_block_for: 300
+  login_attempts: 3
+  login_within: 120
+  exec_timeout_min: 0
+  exec_timeout_sec: 30
+
+vlans_internal:
+  - id: 5
+    name: "APs"
+  - id: 6
+    name: "Management"
+  - id: 7
+    name: "Native"
+  - id: 10
+    name: "Servers"
+  - id: 20
+    name: "Administration"
+  - id: 30
+    name: "Staff"
+  - id: 40
+    name: "VoIp"
+  - id: 50
+    name: "Wireless"
+  - id: 60
+    name: "Guests"
+  - id: 99
+    name: "Blackhole"
+
+vlans_external:
+  - id: 6
+    name: "Management"
+  - id: 102
+    name: "Zagreb-Pula"
+  - id: 103
+    name: "Zagreb-Split"
+  - id: 203
+    name: "Pula-Split"
+
+ip_hosts:
+  # Wan
+  - name: SW0
+    ip: 10.0.0.17
+
+  # Zagreb
+  - name: RT1-Zg
+    ip: 10.0.0.1
+    
+  - name: MLS1-Zg
+    ip: 172.20.0.158
+
+  - name: MLS2-Zg
+    ip: 172.20.0.154
+
+  - name: SW1-Zg
+    ip: 172.20.0.228
+
+  - name: SW2-Zg
+    ip: 172.20.0.229
+
+  - name: WLC1-Zg
+    ip: 172.20.0.230
+
+  - name: AP1-Zg
+    ip: 172.20.0.165
+
+  - name: DHCP-SRV
+    ip: 172.20.0.196
+
+  - name: PCA
+    ip: 172.20.3.6
+
+  - name: PCB
+    ip: 172.20.2.6
+
+  # Pula
+  - name: RT1-Pl
+    ip:  10.0.0.2
+
+  - name: SW1-Pl
+    ip: 172.20.8.146
+
+  - name: AP1-Pl
+    ip: 172.20.8.154
+
+  - name: PCC
+    ip: 172.20.9.6
+    
+  # Split
+  - name: RT1-St
+    ip:  10.0.0.6
+
+  - name: SW1-St
+    ip: 172.20.12.18
+
+  - name: AP1-St
+    ip: 172.20.12.16
+
+  - name: PCD
+    ip: 172.20.13.134

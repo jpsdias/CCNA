@@ -1,0 +1,178 @@
+---
+hostname: RT1-Pl
+
+l3_interfaces:
+  - name: Loopback0
+    description: "Engineering Network"
+    ipv4:
+      address: 172.20.11.1
+      prefix: 24
+    ipv6:
+      address: "2001:B::1/64"
+  
+  - name: Loopback1
+    description: "Design Network"
+    ipv4:
+      address: 172.20.8.161
+      prefix: 27
+    ipv6:
+      address: "2001:B:0:1::1/64"
+  
+  - name: Loopback2
+    description: "Communication Network"
+    ipv4:
+      address: 172.20.9.129
+      prefix: 25
+    ipv6:
+      address: "2001:B:0:2::1/64"
+
+subinterfaces:
+  - parent: "{{ rInt['Gig0/1'] }}"
+    vlan: 5
+    description: "Trunk for Vlan 5 APs"
+    ipv4:
+      address: 172.20.8.153
+      prefix: 29
+    ipv6:
+      address: "2001:B:0:6::1/64"
+  
+  - parent: "{{ rInt['Gig0/1'] }}"
+    vlan: 6
+    description: "Trunk for Vlan 6 Management"
+    ipv4:
+      address: 172.20.8.145
+      prefix: 29
+    ipv6:
+      address: "2001:B:0:7::1/64"
+  
+  - parent: "{{ rInt['Gig0/1'] }}"
+    vlan: 30
+    description: "Trunk for Vlan 30 Staff"
+    ipv4:
+      address: 172.20.9.1
+      prefix: 25
+    ipv6:
+      address: "2001:B:0:3::1/64"
+      dhcpv6_pool: "Staff-v6"
+  
+  - parent: "{{ rInt['Gig0/1'] }}"
+    vlan: 50
+    description: "Trunk for Vlan 50 Wireless"
+    ipv4:
+      address: 172.20.10.1
+      prefix: 24
+    ipv6:
+      address: "2001:B:0:4::1/64"
+      dhcpv6_pool: "Wireless-Pl-v6"
+  
+  - parent: "{{ rInt['Gig0/1'] }}"
+    vlan: 60
+    description: "Trunk for Vlan 60 Guests"
+    ipv4:
+      address: 172.20.8.193
+      prefix: 26
+    ipv6:
+      address: "2001:B:0:5::1/64"
+      dhcpv6_pool: "Guests-Pl-v6"
+  
+  - parent: "{{ rInt['Gig0/2'] }}"
+    vlan: 102
+    description: "Connection to RT1-Zg"
+    ipv4:
+      address: 10.0.0.2
+      prefix: 30
+    ipv6:
+      address: "FE80::102:2"
+      link_local: True
+  
+  - parent: "{{ rInt['Gig0/2'] }}"
+    vlan: 203
+    description: "Connection to RT1-St"
+    ipv4:
+      address: 10.0.0.9
+      prefix: 30
+    ipv6:
+      address: "FE80::203:1"
+      link_local: True
+
+  - parent: "{{ rInt['Gig0/2'] }}"
+    vlan: 6
+    description: "Management RT1-Pl"
+    ipv4:
+      address: 10.0.0.19
+      prefix: 29
+    ipv6:
+      address: "FE80::6:2"
+      link_local: True
+
+dhcp_pools:
+  - name: Staff
+    network:
+      address: 172.20.9.0
+      netmask: 255.255.255.128
+    gateway:
+      default_router: 172.20.9.1
+    excluded:
+      start: 172.20.9.0
+      end: 172.20.9.5
+  
+  - name: Wireless-Pl
+    network:
+      address: 172.20.10.0
+      netmask: 255.255.255.0
+    gateway:  
+      default_router: 172.20.10.1
+    excluded:
+      start: 172.20.10.0
+      end: 172.20.10.5
+  
+  - name: Guests-Pl
+    network:
+      address: 172.20.8.192
+      netmask: 255.255.255.192
+    gateway:
+      default_router: 172.20.8.193
+    excluded:
+      start: 172.20.8.192
+      end: 172.20.8.197
+
+dhcpv6_pools:
+  - name: Staff-v6
+    prefix: "2001:B:0:3::/64"
+  
+  - name: Wireless-Pl-v6
+    prefix: "2001:B:0:4::/64"
+  
+  - name: Guests-Pl-v6
+    prefix: "2001:B:0:5::/64"
+
+static_routes:
+  # Default routes
+  - dest: "0.0.0.0"
+    prefix: 0
+    next_hop: "10.0.0.1"
+    ad: 5
+  - dest: "0.0.0.0"
+    prefix: 0
+    next_hop: "10.0.0.10"
+    ad: 10
+
+  # Zagreb network
+  - dest: "172.20.0.0"
+    prefix: 21
+    next_hop: "10.0.0.1"
+    ad: 1
+  - dest: "172.20.0.0"
+    prefix: 21
+    next_hop: "10.0.0.10"
+    ad: 5
+
+  # Split network
+  - dest: "172.20.12.0"
+    prefix: 23
+    next_hop: "10.0.0.10"
+    ad: 1
+  - dest: "172.20.12.0"
+    prefix: 23
+    next_hop: "10.0.0.1"
+    ad: 5
