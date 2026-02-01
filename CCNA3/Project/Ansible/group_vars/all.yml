@@ -5,7 +5,7 @@ ssh_version: 2
 
 # INTERFACE NAMING CONVENTION
 # Set to 'real' for physical lab or 'pnet' for Pnet
-interface_type: "real" # options: 'real' or 'pnet' 
+interface_type: "pnet" # options: 'real' or 'pnet' 
 
 security:
   min_password_length: 10

@@ -4,7 +4,7 @@
 # Exit on any error
 set -e
 
-GATEWAY="192.168.64.35"
+GATEWAY="192.168.1.100"
 
 echo "Adding routes via $GATEWAY..."
 
