@@ -134,28 +134,33 @@ subinterfaces:
 static_routes:
   - dest: 0.0.0.0
     prefix: 0
-    next_hop: 172.20.0.193
+    next_hop: 172.20.0.194
   
-  - dest: 172.20.0.192
-    prefix: 27
-    next_hop: 172.20.0.193
+  # - dest: 172.20.0.192
+  #   prefix: 27
+  #   next_hop: 172.20.0.193
   
-  - dest: 172.20.3.0
-    prefix: 24
-    next_hop: 172.20.3.1
+  # - dest: 172.20.3.0
+  #   prefix: 24
+  #   next_hop: 172.20.3.1
   
-  - dest: 172.20.2.0
-    prefix: 24
-    next_hop: 172.20.2.1
+  # - dest: 172.20.2.0
+  #   prefix: 24
+  #   next_hop: 172.20.2.1
   
-  - dest: 172.20.6.0
-    prefix: 23
-    next_hop: 172.20.6.1
+  # - dest: 172.20.6.0
+  #   prefix: 23
+  #   next_hop: 172.20.6.1
   
-  - dest: 172.20.4.0
-    prefix: 23
-    next_hop: 172.20.4.1
+  # - dest: 172.20.4.0
+  #   prefix: 23
+  #   next_hop: 172.20.4.1
   
-  - dest: 172.20.1.0
-    prefix: 24
-    next_hop: 172.20.1.1
+  # - dest: 172.20.1.0
+  #   prefix: 24
+  #   next_hop: 172.20.1.1
+
+http_server:
+  enabled: true
+  secure: true
+  auth: local

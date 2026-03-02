@@ -37,24 +37,10 @@ vlans_internal:
   - id: 99
     name: "Blackhole"
 
-vlans_external:
-  - id: 6
-    name: "Management"
-  - id: 102
-    name: "Zagreb-Pula"
-  - id: 103
-    name: "Zagreb-Split"
-  - id: 203
-    name: "Pula-Split"
-
 ip_hosts:
-  # Wan
-  - name: SW0
-    ip: 10.0.0.17
-
   # Zagreb
   - name: RT1-Zg
-    ip: 10.0.0.1
+    ip: 203.0.113.1
     
   - name: MLS1-Zg
     ip: 172.20.0.158
@@ -85,7 +71,7 @@ ip_hosts:
 
   # Pula
   - name: RT1-Pl
-    ip:  10.0.0.2
+    ip:  172.20.11.1
 
   - name: SW1-Pl
     ip: 172.20.8.146
@@ -98,7 +84,7 @@ ip_hosts:
     
   # Split
   - name: RT1-St
-    ip:  10.0.0.6
+    ip:  172.20.12.193
 
   - name: SW1-St
     ip: 172.20.12.18
@@ -108,3 +94,55 @@ ip_hosts:
 
   - name: PCD
     ip: 172.20.13.134
+
+ntp:
+  master:
+    enabled: false
+  client:
+    server: 203.0.113.1
+
+snmp_acl:
+  name: SNMP_ACL
+  entries:
+    - ace:
+        sequence: 10
+        grant: permit
+        source:
+          address: 172.20.0.197
+          wildcard_bits: 0.0.0.0
+
+snmp:
+  community: cisco
+  access: ro
+
+syslog:
+  server: 172.20.0.197
+  trap: informational
+
+ssh_acl:
+  name: SSH_ACL
+  entries:
+    - ace:
+        sequence: 10 #Admin-Zg Network
+        grant: permit
+        source:
+          address: 172.20.3.0
+          wildcard_bits: 0.0.0.255
+    - ace:    
+        sequence: 20 #Staff-Zg Network
+        grant: permit
+        source:
+          address: 172.20.2.0
+          wildcard_bits: 0.0.0.255
+    - ace:    
+        sequence: 30 #Staff-Pl Network
+        grant: permit
+        source:
+          address: 172.20.9.0
+          wildcard_bits: 0.0.0.127
+    - ace:    
+        sequence: 40 #Staff-St Network
+        grant: permit
+        source:
+          address: 172.20.13.128
+          wildcard_bits: 0.0.0.127

@@ -2,6 +2,11 @@
 hostname: RT1-St
 
 l3_interfaces:
+  - name: "{{ rInt['Gig0/2'] }}"
+    description: "Connection to Wan"
+    ipv4:
+      dhcp: True
+
   - name: Loopback0
     description: "Multimedia Network"
     ipv4: 
@@ -9,14 +14,6 @@ l3_interfaces:
       prefix: 26
     ipv6:
       address: "2001:C::1/64"
-
-  - name: Loopback1
-    description: "Design Network"
-    ipv4:
-      address: 172.20.12.129
-      prefix: 26
-    ipv6:
-      address: "2001:C:0:1::1/64"
 
   - name: Loopback2
     description: "Communication Network"
@@ -56,6 +53,15 @@ subinterfaces:
       dhcpv6_pool: "Staff-v6"
   
   - parent: "{{ rInt['Gig0/1'] }}"
+    vlan: 40
+    description: "Trunk for Vlan 40 VoIP"
+    ipv4:
+      address: 172.20.12.129
+      prefix: 26
+    ipv6:
+      address: "2001:C:0:1::1/64"
+
+  - parent: "{{ rInt['Gig0/1'] }}"
     vlan: 50
     description: "Trunk for Vlan 50 Wireless"
     ipv4:
@@ -74,36 +80,6 @@ subinterfaces:
     ipv6:
       address: "2001:C:0:5::1/64"
       dhcpv6_pool: "Guests-St-v6"
-  
-  - parent: "{{ rInt['Gig0/2'] }}"
-    vlan: 103
-    description: "Connection to RT1-Zg"
-    ipv4:
-      address: 10.0.0.6
-      prefix: 30
-    ipv6:
-      address: "FE80::103:2"
-      link_local: True
-  
-  - parent: "{{ rInt['Gig0/2'] }}"
-    vlan: 203
-    description: "Connection to RT1-St"
-    ipv4:
-      address: 10.0.0.10
-      prefix: 30
-    ipv6:
-      address: "FE80::203:2"
-      link_local: True
-
-  - parent: "{{ rInt['Gig0/2'] }}"
-    vlan: 6
-    description: "Management RT1-St"
-    ipv4:
-      address: 10.0.0.20
-      prefix: 29
-    ipv6:
-      address: "FE80::6:2"
-      link_local: True
 
 dhcp_pools:
   - name: Staff
@@ -115,6 +91,16 @@ dhcp_pools:
     excluded:
       start: 172.20.13.128
       end: 172.20.13.133
+
+  - name: VoIP
+    network:
+      address: 172.20.12.128
+      netmask: 255.255.255.192
+    gateway:
+      default_router: 172.20.12.129
+    excluded:
+      start: 172.20.12.128
+      end: 172.20.12.133
   
   - name: Wireless-St
     network: 
@@ -139,6 +125,9 @@ dhcp_pools:
 dhcpv6_pools:
   - name: Staff-v6
     prefix: "2001:C:0:3::/64"
+
+  - name: VoIP-v6
+    prefix: "2001:C:0:1::/64"
   
   - name: Wireless-St-v6
     prefix: "2001:C:0:4::/64"
@@ -146,33 +135,123 @@ dhcpv6_pools:
   - name: Guests-St-v6
     prefix: "2001:C:0:5::/64"
 
+
+gre_tunnels:
+  - name: Tunnel1
+    description: Split to Zagreb
+    ip: 10.0.0.6
+    mask: 255.255.255.252
+    source: 192.168.1.20
+    destination: 192.168.1.18
+
+  - name: Tunnel2
+    description: Split to Pula
+    ip: 10.0.0.10
+    mask: 255.255.255.252
+    source: 192.168.1.20
+    destination: 192.168.1.19
+    
+ipsec_peers:
+  - address: 203.0.113.2
+    key: z4gr3b$pl1t
+    acl_name: ZAGREB-ACL-SPLIT
+    src_ip: 203.0.113.4
+    dst_ip: 203.0.113.2
+    seq: 20
+
+  - address: 203.0.113.3
+    key: Pvl4$pl1t
+    acl_name: PULA-ACL-SPLIT
+    src_ip: 203.0.113.4
+    dst_ip: 203.0.113.3
+    seq: 30
+
+ospf_processes:
+  - process_id: 100
+    router_id: 3.3.3.3
+    passive_interfaces:
+      - Loopback0
+      - Loopback2
+    active_interfaces:
+      - "{{ rInt['Gig0/1'] }}.5"
+      - "{{ rInt['Gig0/1'] }}.6"
+      - "{{ rInt['Gig0/1'] }}.30"
+      - "{{ rInt['Gig0/1'] }}.40"
+      - "{{ rInt['Gig0/1'] }}.50"
+      - "{{ rInt['Gig0/1'] }}.60"
+      - "{{ rInt['Gig0/2'] }}"
+      - Tunnel1
+      - Tunnel2
+      - Loopback0
+      - Loopback2
+
 static_routes:
-  # Default routes
+  # Default route
   - dest: "0.0.0.0"
     prefix: 0
-    next_hop: "10.0.0.5"
-    ad: 5
-  - dest: "0.0.0.0"
-    prefix: 0
-    next_hop: "10.0.0.9"
-    ad: 10
-  
-  # Zagreb network
-  - dest: "172.20.0.0"
-    prefix: 21
-    next_hop: "10.0.0.5"
-    ad: 1
-  - dest: "172.20.0.0"
-    prefix: 21
-    next_hop: "10.0.0.9"
-    ad: 5
-  
-  # Pula network
-  - dest: "172.20.8.0"
-    prefix: 22
-    next_hop: "10.0.0.9"
-    ad: 1
-  - dest: "172.20.8.0"
-    prefix: 22
-    next_hop: "10.0.0.5"
-    ad: 5
+    next_hop: "192.168.1.1"
+
+nat:
+  inside_interfaces:
+    - "{{ rInt['Gig0/1'] }}.5"
+    - "{{ rInt['Gig0/1'] }}.6"
+    - "{{ rInt['Gig0/1'] }}.30"
+    - "{{ rInt['Gig0/1'] }}.40"
+    - "{{ rInt['Gig0/1'] }}.50"
+    - "{{ rInt['Gig0/1'] }}.60"
+  outside_interface: "{{ rInt['Gig0/2'] }}"
+
+nat_acl:
+  name: NAT_ACL
+  entries:
+    - ace:
+        sequence: 10
+        grant: deny
+        source:
+          address: 172.20.12.128
+          wildcard_bits: 0.0.0.63
+    - ace:
+        sequence: 20
+        grant: permit
+        source:
+          address: 172.20.12.0
+          wildcard_bits: 0.0.1.255
+
+static_nat:
+  - inside_ip: 172.20.12.18
+    outside_interface: "{{ rInt['Gig0/2'] }}"
+    port_local: 22
+    port_global: 2225
+
+guest_acl:
+  name: GUEST_ACL
+  entries:
+    - ace: # Deny access to internal networks
+        sequence: 10
+        grant: deny
+        protocol: ip
+        source:
+          address: 172.20.12.32
+          wildcard_bits: 0.0.0.31
+        destination:
+          address: 172.20.0.0
+          wildcard_bits: 0.0.255.255
+    - ace: # Deny access to VPN networks  
+        sequence: 20
+        grant: deny
+        protocol: ip
+        source: 
+          address: 172.20.12.32
+          wildcard_bits: 0.0.0.31
+        destination:
+          address: 10.0.0.0
+          wildcard_bits: 0.0.0.15
+    - ace: # Permit access to the Internet
+        sequence: 30
+        grant: permit
+        protocol: ip
+        source:
+          address: 172.20.12.32
+          wildcard_bits: 0.0.0.31
+        destination:
+          any: true

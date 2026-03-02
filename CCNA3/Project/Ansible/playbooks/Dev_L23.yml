@@ -227,5 +227,61 @@
       when: stp is defined
       tags: stp
 
+    - name: Configure OSPF process
+      cisco.ios.ios_ospfv2:
+        config:
+          processes:
+            - process_id: "{{ item.process_id }}"
+              router_id: "{{ item.router_id }}"
+              default_information:
+                originate: true
+        state: merged
+      loop: "{{ ospf_processes }}"
+      when: ospf_processes is defined
+      tags: ospf
+
+    - name: Configure OSPF passive interfaces
+      cisco.ios.ios_config:
+        lines:
+          - "passive-interface {{ item }}"
+        parents: "router ospf {{ ospf_processes[0].process_id }}"
+      loop: "{{ ospf_processes[0].passive_interfaces | default([]) }}"
+      when: ospf_processes is defined and ospf_processes[0].passive_interfaces | default([]) | length > 0
+      tags: ospf
+
+    - name: Enable OSPF on active interfaces
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: "{{ item }}"
+            address_family:
+              - afi: ipv4
+                process:
+                  id: "{{ ospf_processes[0].process_id }}"
+                  area_id: "0"
+        state: merged
+      loop: "{{ ospf_processes[0].active_interfaces }}"
+      when: ospf_processes is defined and ospf_processes[0].active_interfaces is defined
+      tags: ospf
+
+    - name: Configure GUEST ACL
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ guest_acl.name }}"
+                acl_type: extended
+                aces: "{{ guest_acl.entries | map(attribute='ace') | list }}"
+        state: merged
+      when: guest_acl is defined
+      tags: guest_acl
+
+    - name: Apply ACL inbound on VLAN interface
+      cisco.ios.ios_config:
+        lines:
+          - ip access-group {{ guest_acl.name }} in
+        parents: "interface Vlan 60"
+      when: guest_acl is defined
+      tags: guest_acl
+      
   post_tasks:
     - import_tasks: postTasks.yml

@@ -179,3 +179,26 @@ stp:
   root_secondary: "40,50,60"
 
 default_gateway: 172.20.0.157
+
+ospf_processes:
+  - process_id: 100
+    router_id: 1.1.1.2
+    passive_interfaces:
+      - Vlan5
+      - Vlan6
+      - Vlan10
+      - Vlan20
+      - Vlan30
+      - Vlan40
+      - Vlan50
+      - Vlan60
+    active_interfaces:
+      - "{{ mInt['Fa0/1'] }}"
+      - Vlan5
+      - Vlan6
+      - Vlan10
+      - Vlan20
+      - Vlan30
+      - Vlan40
+      - Vlan50
+      - Vlan60

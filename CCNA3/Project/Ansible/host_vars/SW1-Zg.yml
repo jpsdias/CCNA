@@ -11,8 +11,9 @@ l2_interfaces:
       allowed_vlans: "6,10,20,30,40,50,60"
 
   - name: "{{ sInt['Fa0/2'] }}"
+    description: "Connection to SERVER-1"
     access:
-      vlan: 30
+      vlan: 10
 
   - name: "{{ sInt['Fa0/3'] }}"
     access:

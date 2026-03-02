@@ -33,6 +33,23 @@
       when:
         - l3_interfaces is defined
         - item.name not in (management_interface | default([]))
+        - item.ipv4.dhcp is not defined or not item.ipv4.dhcp
+      tags: l3_interfaces
+
+    - name: Configure L3 Interfaces with DHCP
+      cisco.ios.ios_l3_interfaces:
+        config:
+          - name: "{{ item.name }}"
+            ipv4:
+              - dhcp:
+                  enable: true
+        state: merged
+      loop: "{{ l3_interfaces }}"
+      when:
+        - l3_interfaces is defined
+        - item.name not in (management_interface | default([]))
+        - item.ipv4.dhcp is defined
+        - item.ipv4.dhcp
       tags: l3_interfaces
 
     - name: Enable Parent Interface for Subinterfaces
@@ -127,6 +144,74 @@
       when: item.ipv6.dhcpv6_pool is defined
       tags: dhcpv6
 
+    - name: Configure ISAKMP Policy 100
+      cisco.ios.ios_config:
+        lines:
+          - encr aes 128
+          - hash sha
+          - authentication pre-share
+          - group 5
+        parents: crypto isakmp policy 100
+      when: ipsec_peers is defined
+      tags: ipsec
+
+    - name: Configure ISAKMP Pre-shared Keys
+      cisco.ios.ios_config:
+        lines:
+          - crypto isakmp key {{ item.key }} address {{ item.address }}
+      loop: "{{ ipsec_peers }}"
+      when: ipsec_peers is defined
+      tags: ipsec
+
+    - name: Configure IPsec Transform Set
+      cisco.ios.ios_config:
+        lines:
+          - crypto ipsec transform-set TSET esp-aes esp-sha-hmac
+      when: ipsec_peers is defined
+      tags: ipsec
+
+    - name: Configure Crypto Map
+      cisco.ios.ios_config:
+        lines:
+          - set peer {{ item.address }}
+          - set transform-set TSET
+          - match address {{ item.acl_name }}
+        parents: crypto map CROATIA {{ item.seq }} ipsec-isakmp
+      loop: "{{ ipsec_peers }}"
+      when: ipsec_peers is defined
+      tags: ipsec
+
+    - name: Configure GRE Tunnels
+      cisco.ios.ios_config:
+        lines:
+          - description {{ item.description }}
+          - ip address {{ item.ip }} {{ item.mask }}
+          - tunnel source {{ item.source }}
+          - tunnel destination {{ item.destination }}
+        parents: interface {{ item.name }}
+      loop: "{{ gre_tunnels }}"
+      when: gre_tunnels is defined
+      tags: gre
+
+    - name: Apply Crypto Map to WAN interfaces
+      cisco.ios.ios_config:
+        lines:
+          - crypto map CROATIA
+        parents: interface {{ rInt['Gig0/2'] }}
+      when: 
+        - ipsec_peers is defined
+      tags: ipsec
+
+    - name: Configure ACLs for IPsec
+      cisco.ios.ios_config:
+        lines:
+          - permit gre host {{ item.src_ip }} host {{ item.dst_ip }}
+          - deny ip any any
+        parents: ip access-list extended {{ item.acl_name }}
+      loop: "{{ ipsec_peers }}"
+      when: ipsec_peers is defined
+      tags: ipsec
+
     - name: Configure Static Routes
       cisco.ios.ios_static_routes:
         config:
@@ -141,6 +226,128 @@
       loop: "{{ static_routes }}"
       when: static_routes is defined
       tags: static_routes
+
+    - name: Configure OSPF process
+      cisco.ios.ios_ospfv2:
+        config:
+          processes:
+            - process_id: "{{ item.process_id }}"
+              router_id: "{{ item.router_id }}"
+              default_information:
+                originate: true
+        state: merged
+      loop: "{{ ospf_processes }}"
+      when: ospf_processes is defined
+      tags: ospf
+
+    - name: Configure OSPF passive interfaces
+      cisco.ios.ios_config:
+        lines:
+          - "passive-interface {{ item }}"
+        parents: "router ospf {{ ospf_processes[0].process_id }}"
+      loop: "{{ ospf_processes[0].passive_interfaces | default([]) }}"
+      when: ospf_processes is defined and ospf_processes[0].passive_interfaces | default([]) | length > 0
+      tags: ospf
+
+    - name: Enable OSPF on active interfaces
+      cisco.ios.ios_ospf_interfaces:
+        config:
+          - name: "{{ item }}"
+            address_family:
+              - afi: ipv4
+                process:
+                  id: "{{ ospf_processes[0].process_id }}"
+                  area_id: "0"
+        state: merged
+      loop: "{{ ospf_processes[0].active_interfaces }}"
+      when: ospf_processes is defined and ospf_processes[0].active_interfaces is defined
+      tags: ospf
+
+    - name: Configure NAT ACL
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ nat_acl.name }}"
+                acl_type: standard
+                aces: "{{ nat_acl.entries | map(attribute='ace') | list }}"
+        state: merged
+      when: nat_acl is defined
+      tags: nat
+
+    - name: Configure NAT inside interfaces
+      cisco.ios.ios_config:
+        lines:
+          - ip nat inside
+        parents: "interface {{ item }}"
+      loop: "{{ nat.inside_interfaces }}"
+      when: nat is defined
+      tags: nat
+
+    - name: Configure NAT outside interface
+      cisco.ios.ios_config:
+        lines:
+          - ip nat outside
+        parents: "interface {{ nat.outside_interface }}"
+      when: nat is defined
+      tags: nat
+
+    - name: Configure PAT
+      cisco.ios.ios_config:
+        lines:
+          - "ip nat inside source list {{ nat_acl.name }} interface {{ nat.outside_interface }} overload"
+      when: nat is defined and nat_acl is defined
+      tags: nat
+
+    - name: Bind NAT ACL to outside interface
+      cisco.ios.ios_config:
+        lines:
+          - "ip nat inside source static tcp {{ item.inside_ip }} {{ item.port_local }} interface {{ item.outside_interface }} {{ item.port_global }}"
+      loop: "{{ static_nat }}"
+      when: static_nat is defined
+      tags: static_nat
+
+    - name: Configure HTTP server on DHCP-SRV
+      cisco.ios.ios_config:
+        lines:
+          - ip http server
+          - ip http secure-server
+          - ip http authentication local
+      when: http_server is defined and http_server.enabled
+      tags: http
+
+    - name: Configure GUEST ACL
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ guest_acl.name }}"
+                acl_type: extended
+                aces: "{{ guest_acl.entries | map(attribute='ace') | list }}"
+        state: merged
+      when: guest_acl is defined
+      tags: guest_acl
+
+    - name: Apply ACL inbound on VLAN interface
+      cisco.ios.ios_config:
+        lines:
+          - ip access-group {{ guest_acl.name }} in
+        parents: "interface {{ rInt['Gig0/1'] }}.60"
+      when: guest_acl is defined
+      tags: guest_acl
+
+    # - name: Get current static routes
+    #   cisco.ios.ios_command:
+    #     commands:
+    #       - show running-config | include ^ip route
+    #   register: current_routes
+    #   tags: remove_static_routes
+
+    # - name: Remove all static routes
+    #   cisco.ios.ios_config:
+    #     lines: "{{ current_routes.stdout_lines[0] | map('regex_replace', '^ip route', 'no ip route') | list }}"
+    #   when: current_routes.stdout_lines[0] | length > 0
+    #   tags: remove_static_routes
 
   post_tasks:
     - import_tasks: postTasks.yml

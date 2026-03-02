@@ -67,6 +67,12 @@ l2_interfaces:
     access:
       vlan: 30
 
+  - name: "{{ sInt['Fa0/16'] }}"
+    description: "Connection to VoIP Phone"
+    access:
+      vlan: 30
+      voice_vlan: 40
+
   - name: "{{ sInt['Fa0/21'] }}"
     description: "Connection to AP1-St"
     trunk:
@@ -88,7 +94,6 @@ svis:
       address: "2001:C:0:7::2/64"
 
 unused_interfaces:
-  - "{{ sInt['Fa0/16'] }}"
   - "{{ sInt['Fa0/17'] }}"
   - "{{ sInt['Fa0/18'] }}"
   - "{{ sInt['Fa0/19'] }}"
@@ -101,4 +106,5 @@ unused_interfaces:
 trusted_ports:
   - "{{ sInt['Fa0/1'] }}"
   - "{{ sInt['Fa0/2'] }}"
+  - "{{ sInt['Fa0/16'] }}"
   - "{{ sInt['Fa0/21'] }}"

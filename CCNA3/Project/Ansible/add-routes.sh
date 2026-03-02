@@ -4,13 +4,16 @@
 # Exit on any error
 set -e
 
-GATEWAY="192.168.0.100"
+GATEWAY="192.168.1.18"
 
 echo "Adding routes via $GATEWAY..."
 
 # Add routes
 sudo ip route add 172.20.0.0/16 via $GATEWAY
 sudo ip route add 10.0.0.0/27 via $GATEWAY
+
+# sudo ip route delete 172.20.0.0/16 via $GATEWAY
+# sudo ip route delete 10.0.0.0/27 via $GATEWAY
 
 echo "Routes successfully added:"
 ip route | grep "$GATEWAY"
