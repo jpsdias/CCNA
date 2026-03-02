@@ -1,0 +1,434 @@
+Building configuration...
+
+Current configuration : 9093 bytes
+!
+! Last configuration change at 21:12:53 UTC Mon Mar 2 2026 by cisco
+! NVRAM config last updated at 21:12:56 UTC Mon Mar 2 2026 by cisco
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname MLS1-Zg
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$rSOl$qJF4M755CZSzxJGEpcuy70
+!
+username cisco privilege 15 secret 5 $1$LOaf$uEsBGBtWk7QpGd3nQdLnZ1
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip domain-name isepacademy.ccna.itn.com
+ip host MLS2-Zg 172.20.0.154
+ip host RT1-St 172.20.12.193
+ip host RT1-Pl 172.20.11.1
+ip host RT1-Zg 203.0.113.1
+ip host PCD 172.20.13.134
+ip host AP1-St 172.20.12.16
+ip host SW1-St 172.20.12.18
+ip host PCC 172.20.9.6
+ip host AP1-Pl 172.20.8.154
+ip host SW1-Pl 172.20.8.146
+ip host PCB 172.20.2.6
+ip host PCA 172.20.3.6
+ip host DHCP-SRV 172.20.0.196
+ip host AP1-Zg 172.20.0.165
+ip host WLC1-Zg 172.20.0.230
+ip host SW2-Zg 172.20.0.229
+ip host SW1-Zg 172.20.0.228
+ip host MLS1-Zg 172.20.0.158
+ip host SW0 10.0.0.17
+ip cef
+login block-for 300 attempts 3 within 120
+ipv6 unicast-routing
+ipv6 cef
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 5-6,10,20,30 priority 24576
+spanning-tree vlan 40,50,60 priority 28672
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Port-channel1
+ description Port-Channel Fa0/2-3
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Ethernet0/0
+ description Connection to RT1-Zg
+ no switchport
+ ip address 172.20.0.158 255.255.255.252
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:8::2/64
+!
+interface Ethernet0/1
+ description Port-Channel 1 member
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode on
+!
+interface Ethernet0/2
+ description Port-Channel 1 member
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport mode trunk
+ switchport nonegotiate
+ channel-group 1 mode on
+!
+interface Ethernet0/3
+ description Connection to SW2-Zg
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Ethernet1/0
+ description Connection to SW1-Zg
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 7
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Ethernet1/1
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet1/2
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet1/3
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet2/0
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet2/1
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet2/2
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet2/3
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet3/0
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet3/1
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet3/2
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet3/3
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet4/0
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet4/1
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet4/2
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet4/3
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet5/0
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet5/1
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet5/2
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet5/3
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet6/0
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet6/1
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Ethernet6/2
+!
+interface Ethernet6/3
+!
+interface Vlan5
+ description Vlan APs
+ ip address 172.20.0.162 255.255.255.224
+ standby version 2
+ standby 5 ip 172.20.0.161
+ standby 5 priority 110
+ standby 5 preempt
+ standby 15 ipv6 autoconfig
+ standby 15 priority 110
+ standby 15 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:7::2/64
+!
+interface Vlan6
+ description Vlan Management
+ ip address 172.20.0.226 255.255.255.224
+ standby version 2
+ standby 6 ip 172.20.0.225
+ standby 6 priority 110
+ standby 6 preempt
+ standby 16 ipv6 autoconfig
+ standby 16 priority 110
+ standby 16 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:5::2/64
+!
+interface Vlan10
+ description Vlan Servers
+ ip address 172.20.0.194 255.255.255.224
+ standby version 2
+ standby 10 ip 172.20.0.193
+ standby 10 priority 110
+ standby 10 preempt
+ standby 110 ipv6 autoconfig
+ standby 110 priority 110
+ standby 110 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:6::2/64
+!
+interface Vlan20
+ description Vlan Administration
+ ip address 172.20.3.2 255.255.255.0
+ ip helper-address 172.20.3.5 
+ standby version 2
+ standby 20 ip 172.20.3.1
+ standby 20 priority 110
+ standby 20 preempt
+ standby 120 ipv6 autoconfig
+ standby 120 priority 110
+ standby 120 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+!
+interface Vlan30
+ description Vlan Staff
+ ip address 172.20.2.2 255.255.255.0
+ ip helper-address 172.20.2.5 
+ standby version 2
+ standby 30 ip 172.20.2.1
+ standby 30 priority 110
+ standby 30 preempt
+ standby 130 ipv6 autoconfig
+ standby 130 priority 110
+ standby 130 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:1::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+!
+interface Vlan40
+ description Vlan VoIP
+ ip address 172.20.6.2 255.255.254.0
+ ip helper-address 172.20.6.5 
+ standby version 2
+ standby 40 ip 172.20.6.1
+ standby 40 preempt
+ standby 140 ipv6 autoconfig
+ standby 140 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:2::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+!
+interface Vlan50
+ description Vlan Wireless
+ ip address 172.20.4.2 255.255.254.0
+ ip helper-address 172.20.4.5 
+ standby version 2
+ standby 50 ip 172.20.4.1
+ standby 50 preempt
+ standby 150 ipv6 autoconfig
+ standby 150 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:3::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+!
+interface Vlan60
+ description Vlan Guests
+ ip address 172.20.1.2 255.255.255.0
+ ip access-group GUEST_ACL in
+ ip helper-address 172.20.1.5 
+ standby version 2
+ standby 60 ip 172.20.1.1
+ standby 60 preempt
+ standby 160 ipv6 autoconfig
+ standby 160 preempt
+ ip ospf 100 area 0
+ ipv6 address 2001:A:0:4::2/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+!
+router ospf 100
+ router-id 1.1.1.2
+ passive-interface Vlan5
+ passive-interface Vlan6
+ passive-interface Vlan10
+ passive-interface Vlan20
+ passive-interface Vlan30
+ passive-interface Vlan40
+ passive-interface Vlan50
+ passive-interface Vlan60
+ default-information originate
+!
+ip default-gateway 172.20.0.157
+ip forward-protocol nd
+!
+ip http server
+!
+ip route 0.0.0.0 0.0.0.0 172.20.0.157
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+ip access-list standard SNMP_ACL
+ permit 172.20.0.197
+ip access-list standard SSH_ACL
+ permit 172.20.3.0 0.0.0.255
+ permit 172.20.2.0 0.0.0.255
+ permit 172.20.9.0 0.0.0.127
+ permit 172.20.13.128 0.0.0.127
+!
+ip access-list extended GUEST_ACL
+ deny   ip 172.20.1.0 0.0.0.255 172.20.0.0 0.0.255.255
+ deny   ip 172.20.1.0 0.0.0.255 10.0.0.0 0.0.0.15
+ permit ip 172.20.1.0 0.0.0.255 any
+!
+logging snmp-trap emergencies
+logging snmp-trap alerts
+logging snmp-trap critical
+logging snmp-trap errors
+logging snmp-trap warnings
+logging snmp-trap informational
+logging host 172.20.0.197
+!
+!
+snmp-server community cisco RO SNMP_ACL
+!
+control-plane
+!
+banner motd ^C
+Welcome to MLS1-Zg!
+^C
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 203.0.113.1
+!
+!
+end

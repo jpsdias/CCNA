@@ -1,0 +1,12 @@
+---
+- name: Deploy Security All Devices
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Backup config
+      cisco.ios.ios_config:
+        backup: yes
+        backup_options:
+          dir_path: backup
+          filename: "{{ hostname }}.txt"

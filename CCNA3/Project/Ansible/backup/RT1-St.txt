@@ -1,0 +1,348 @@
+Building configuration...
+
+  
+Current configuration : 7011 bytes
+!
+! Last configuration change at 21:12:04 UTC Mon Mar 2 2026 by cisco
+! NVRAM config last updated at 21:12:09 UTC Mon Mar 2 2026 by cisco
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname RT1-St
+!
+boot-start-marker
+boot-end-marker
+!
+!
+security passwords min-length 10
+enable secret 5 $1$B0OP$.ZiN73.3QPcN3p2h8M58i1
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.20.13.128 172.20.13.133
+ip dhcp excluded-address 172.20.13.0 172.20.13.5
+ip dhcp excluded-address 172.20.12.32 172.20.12.37
+ip dhcp excluded-address 172.20.12.128 172.20.12.133
+!
+ip dhcp pool Staff
+ network 172.20.13.128 255.255.255.128
+ default-router 172.20.13.129 
+!
+ip dhcp pool Wireless-St
+ network 172.20.13.0 255.255.255.128
+ default-router 172.20.13.1 
+!
+ip dhcp pool Guests-St
+ network 172.20.12.32 255.255.255.224
+ default-router 172.20.12.33 
+!
+ip dhcp pool VoIP
+ network 172.20.12.128 255.255.255.192
+ default-router 172.20.12.129 
+!
+!
+!
+no ip domain lookup
+ip domain name isepacademy.ccna.itn.com
+ip host SW0 10.0.0.17
+ip host MLS1-Zg 172.20.0.158
+ip host MLS2-Zg 172.20.0.154
+ip host SW1-Zg 172.20.0.228
+ip host SW2-Zg 172.20.0.229
+ip host WLC1-Zg 172.20.0.230
+ip host AP1-Zg 172.20.0.165
+ip host DHCP-SRV 172.20.0.196
+ip host PCA 172.20.3.6
+ip host PCB 172.20.2.6
+ip host SW1-Pl 172.20.8.146
+ip host AP1-Pl 172.20.8.154
+ip host PCC 172.20.9.6
+ip host SW1-St 172.20.12.18
+ip host AP1-St 172.20.12.16
+ip host PCD 172.20.13.134
+ip host RT1-Zg 203.0.113.1
+ip host RT1-Pl 172.20.11.1
+ip host RT1-St 172.20.12.193
+ip cef
+login block-for 300 attempts 3 within 120
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool Staff-v6
+ address prefix 2001:C:0:3::/64
+!
+ipv6 dhcp pool Wireless-St-v6
+ address prefix 2001:C:0:4::/64
+!
+ipv6 dhcp pool Guests-St-v6
+ address prefix 2001:C:0:5::/64
+!
+ipv6 dhcp pool VoIP-v6
+ address prefix 2001:C:0:1::/64
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 secret 5 $1$xhnB$2I4V2Xh4VR7IvUsM5mdpK/
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+crypto isakmp policy 100
+ encr aes
+ authentication pre-share
+ group 5
+crypto isakmp key z4gr3b$pl1t address 203.0.113.2    
+crypto isakmp key Pvl4$pl1t address 203.0.113.3    
+!
+!
+crypto ipsec transform-set TSET esp-aes esp-sha-hmac 
+ mode tunnel
+!
+!
+!
+crypto map CROATIA 20 ipsec-isakmp 
+ set peer 203.0.113.2
+ set transform-set TSET 
+ match address ZAGREB-ACL-SPLIT
+crypto map CROATIA 30 ipsec-isakmp 
+ set peer 203.0.113.3
+ set transform-set TSET 
+ match address PULA-ACL-SPLIT
+!
+!
+!
+!
+!
+interface Loopback0
+ description Multimedia Network
+ ip address 172.20.12.193 255.255.255.192
+ ip ospf 100 area 0
+ ipv6 address 2001:C::1/64
+!
+interface Loopback2
+ description Communication Network
+ ip address 172.20.12.65 255.255.255.192
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:2::1/64
+!
+interface Tunnel1
+ description Split to Zagreb
+ ip address 10.0.0.6 255.255.255.252
+ ip ospf 100 area 0
+ tunnel source 192.168.1.20
+ tunnel destination 192.168.1.18
+!
+interface Tunnel2
+ description Split to Pula
+ ip address 10.0.0.10 255.255.255.252
+ ip ospf 100 area 0
+ tunnel source 192.168.1.20
+ tunnel destination 192.168.1.19
+!
+interface Ethernet0/0
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/1
+ no ip address
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ duplex auto
+!
+interface Ethernet0/1.5
+ description Trunk for Vlan 5 APs
+ encapsulation dot1Q 5
+ ip address 172.20.12.25 255.255.255.248
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:6::1/64
+!
+interface Ethernet0/1.6
+ description Trunk for Vlan 6 Management
+ encapsulation dot1Q 6
+ ip address 172.20.12.17 255.255.255.248
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:7::1/64
+!
+interface Ethernet0/1.30
+ description Trunk for Vlan 30 Staff
+ encapsulation dot1Q 30
+ ip address 172.20.13.129 255.255.255.128
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:3::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Staff-v6
+!
+interface Ethernet0/1.40
+ description Trunk for Vlan 40 VoIP
+ encapsulation dot1Q 40
+ ip address 172.20.12.129 255.255.255.192
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:1::1/64
+!
+interface Ethernet0/1.50
+ description Trunk for Vlan 50 Wireless
+ encapsulation dot1Q 50
+ ip address 172.20.13.1 255.255.255.128
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:4::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Wireless-St-v6
+!
+interface Ethernet0/1.60
+ description Trunk for Vlan 60 Guests
+ encapsulation dot1Q 60
+ ip address 172.20.12.33 255.255.255.224
+ ip access-group GUEST_ACL in
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ ipv6 address 2001:C:0:5::1/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Guests-St-v6
+!
+interface Ethernet0/2
+ description Connection to Wan
+ ip address dhcp
+ ip nat outside
+ ip virtual-reassembly in
+ ip ospf 100 area 0
+ duplex auto
+ crypto map CROATIA
+!
+interface Ethernet0/3
+ no ip address
+ duplex auto
+!
+router ospf 100
+ router-id 3.3.3.3
+ passive-interface Ethernet0/1.5
+ passive-interface Ethernet0/1.6
+ passive-interface Ethernet0/1.30
+ passive-interface Ethernet0/1.40
+ passive-interface Ethernet0/1.50
+ passive-interface Ethernet0/1.60
+ passive-interface Loopback0
+ passive-interface Loopback2
+ default-information originate
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list NAT_ACL interface Ethernet0/2 overload
+ip nat inside source static tcp 172.20.12.18 22 interface Ethernet0/2 2225
+ip route 0.0.0.0 0.0.0.0 192.168.1.1
+ip ssh version 2
+!
+ip access-list standard NAT_ACL
+ deny   172.20.12.128 0.0.0.63
+ permit 172.20.12.0 0.0.1.255
+ip access-list standard SNMP_ACL
+ permit 172.20.0.197
+ip access-list standard SSH_ACL
+ permit 172.20.3.0 0.0.0.255
+ permit 172.20.2.0 0.0.0.255
+ permit 172.20.9.0 0.0.0.127
+ permit 172.20.13.128 0.0.0.127
+!
+ip access-list extended GUEST_ACL
+ deny   ip 172.20.12.32 0.0.0.31 172.20.0.0 0.0.255.255
+ deny   ip 172.20.12.32 0.0.0.31 10.0.0.0 0.0.0.15
+ permit ip 172.20.12.32 0.0.0.31 any
+ip access-list extended PULA-ACL-SPLIT
+ permit gre host 203.0.113.4 host 203.0.113.3
+ deny   ip any any
+ip access-list extended ZAGREB-ACL-SPLIT
+ permit gre host 203.0.113.4 host 203.0.113.2
+ deny   ip any any
+!
+logging snmp-trap emergencies
+logging snmp-trap alerts
+logging snmp-trap critical
+logging snmp-trap errors
+logging snmp-trap warnings
+logging snmp-trap informational
+logging host 172.20.0.197
+ipv6 ioam timestamp
+!
+snmp-server community cisco RO SNMP_ACL
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+Welcome to RT1-St!
+^C
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 203.0.113.1
+!
+end

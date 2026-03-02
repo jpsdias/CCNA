@@ -1,0 +1,268 @@
+Building configuration...
+
+  
+  
+Current configuration : 4803 bytes
+!
+! Last configuration change at 21:12:04 UTC Mon Mar 2 2026 by cisco
+! NVRAM config last updated at 21:12:09 UTC Mon Mar 2 2026 by cisco
+!
+version 15.7
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname DHCP-SRV
+!
+boot-start-marker
+boot-end-marker
+!
+!
+security passwords min-length 10
+enable secret 5 $1$Z.cI$uBQdqnrEJqeTIUAbs67p..
+!
+no aaa new-model
+!
+!
+!
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+ip dhcp excluded-address 172.20.3.0 172.20.3.5
+ip dhcp excluded-address 172.20.2.0 172.20.2.5
+ip dhcp excluded-address 172.20.6.0 172.20.6.5
+ip dhcp excluded-address 172.20.4.0 172.20.4.5
+ip dhcp excluded-address 172.20.1.0 172.20.1.5
+!
+ip dhcp pool Administration
+ network 172.20.3.0 255.255.255.0
+ default-router 172.20.3.1 
+!
+ip dhcp pool Staff
+ network 172.20.2.0 255.255.255.0
+ default-router 172.20.2.1 
+!
+ip dhcp pool VoIP
+ network 172.20.6.0 255.255.255.0
+ default-router 172.20.6.1 
+!
+ip dhcp pool Wireless-Zg
+ network 172.20.4.0 255.255.254.0
+ default-router 172.20.4.1 
+!
+ip dhcp pool Guests-Zg
+ network 172.20.1.0 255.255.255.0
+ default-router 172.20.1.1 
+!
+!
+!
+no ip domain lookup
+ip domain name isepacademy.ccna.itn.com
+ip host SW1-Pl 172.20.8.146
+ip host SW0 10.0.0.17
+ip host MLS1-Zg 172.20.0.158
+ip host MLS2-Zg 172.20.0.154
+ip host SW1-Zg 172.20.0.228
+ip host SW2-Zg 172.20.0.229
+ip host WLC1-Zg 172.20.0.230
+ip host AP1-Zg 172.20.0.165
+ip host DHCP-SRV 172.20.0.196
+ip host PCA 172.20.3.6
+ip host PCB 172.20.2.6
+ip host AP1-Pl 172.20.8.154
+ip host PCC 172.20.9.6
+ip host SW1-St 172.20.12.18
+ip host AP1-St 172.20.12.16
+ip host PCD 172.20.13.134
+ip host RT1-Zg 203.0.113.1
+ip host RT1-Pl 172.20.11.1
+ip host RT1-St 172.20.12.193
+ip cef
+login block-for 300 attempts 3 within 120
+ipv6 unicast-routing
+ipv6 cef
+ipv6 dhcp pool Administration-v6
+ address prefix 2001:A::/64
+!
+ipv6 dhcp pool Staff-v6
+ address prefix 2001:A:0:1::/64
+!
+ipv6 dhcp pool VoIP-v6
+ address prefix 2001:A:0:2::/64
+!
+ipv6 dhcp pool Wireless-Zg-v6
+ address prefix 2001:A:0:3::/64
+!
+ipv6 dhcp pool Guests-Zg-v6
+ address prefix 2001:A:0:4::/64
+!
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+username cisco privilege 15 secret 5 $1$xerc$9woieks6y2JsYUQqBHXBL1
+!
+redundancy
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ no ip address
+ duplex auto
+!
+interface Ethernet0/0.10
+ description Subinterface for Vlan 10 - Servers
+ encapsulation dot1Q 10
+ ip address 172.20.0.196 255.255.255.224
+ ipv6 address 2001:A:0:6::4/64
+!
+interface Ethernet0/0.20
+ description Subinterface for Administration Network
+ encapsulation dot1Q 20
+ ip address 172.20.3.5 255.255.255.0
+ ipv6 address 2001:A::5/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Administration-v6
+!
+interface Ethernet0/0.30
+ description Subinterface for Staff Network
+ encapsulation dot1Q 30
+ ip address 172.20.2.5 255.255.255.0
+ ipv6 address 2001:A:0:1::5/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Staff-v6
+!
+interface Ethernet0/0.40
+ description Subinterface for VoIP Network
+ encapsulation dot1Q 40
+ ip address 172.20.6.5 255.255.254.0
+ ipv6 address 2001:A:0:2::5/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server VoIP-v6
+!
+interface Ethernet0/0.50
+ description Subinterface for Wireless Network
+ encapsulation dot1Q 50
+ ip address 172.20.4.5 255.255.254.0
+ ipv6 address 2001:A:0:3::5/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Wireless-Zg-v6
+!
+interface Ethernet0/0.60
+ description Subinterface for Guests Network
+ encapsulation dot1Q 60
+ ip address 172.20.1.5 255.255.255.0
+ ipv6 address 2001:A:0:4::5/64
+ ipv6 nd managed-config-flag
+ ipv6 nd other-config-flag
+ ipv6 dhcp server Guests-Zg-v6
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+ duplex auto
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+ duplex auto
+!
+ip forward-protocol nd
+!
+!
+ip http server
+ip http authentication local
+ip http secure-server
+ip route 0.0.0.0 0.0.0.0 172.20.0.194
+ip ssh version 2
+!
+ip access-list standard SNMP_ACL
+ permit 172.20.0.197
+ip access-list standard SSH_ACL
+ permit 172.20.3.0 0.0.0.255
+ permit 172.20.2.0 0.0.0.255
+ permit 172.20.9.0 0.0.0.127
+ permit 172.20.13.128 0.0.0.127
+!
+!
+logging snmp-trap emergencies
+logging snmp-trap alerts
+logging snmp-trap critical
+logging snmp-trap errors
+logging snmp-trap warnings
+logging snmp-trap informational
+logging host 172.20.0.197
+ipv6 ioam timestamp
+!
+snmp-server community cisco RO SNMP_ACL
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+Welcome to DHCP-SRV!
+^C
+!
+line con 0
+ logging synchronous
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp server 203.0.113.1
+!
+end
