@@ -1,227 +1,259 @@
 Building configuration...
 
-Current configuration : 5508 bytes
+Current configuration : 7121 bytes
 !
-! Last configuration change at 21:14:00 UTC Mon Mar 2 2026 by cisco
-! NVRAM config last updated at 21:14:05 UTC Mon Mar 2 2026 by cisco
+! Last configuration change at 00:54:33 UTC Tue Mar 3 2026 by cisco
+! NVRAM config last updated at 00:54:34 UTC Tue Mar 3 2026 by cisco
 !
-version 15.2
+version 15.0
+no service pad
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
-service compress-config
 !
 hostname SW2-Zg
 !
 boot-start-marker
 boot-end-marker
 !
-!
 enable secret 5 $1$QmeZ$Ds7dDJVP2h/2FKHVzRIbM1
 !
 username cisco privilege 15 secret 5 $1$1fbB$A7SLYM0Rj32RyJU1uJ4gY.
 no aaa new-model
-!
-!
-!
-!
-!
-!
+system mtu routing 1500
 !
 !
 no ip domain-lookup
 ip domain-name isepacademy.ccna.itn.com
-ip host RT1-St 172.20.12.193
-ip host RT1-Pl 172.20.11.1
-ip host RT1-Zg 203.0.113.1
-ip host SW0 10.0.0.17
-ip host MLS1-Zg 172.20.0.158
-ip host MLS2-Zg 172.20.0.154
-ip host SW1-Zg 172.20.0.228
-ip host SW2-Zg 172.20.0.229
-ip host WLC1-Zg 172.20.0.230
-ip host AP1-Zg 172.20.0.165
-ip host DHCP-SRV 172.20.0.196
-ip host PCA 172.20.3.6
-ip host PCB 172.20.2.6
-ip host SW1-Pl 172.20.8.146
-ip host AP1-Pl 172.20.8.154
-ip host PCC 172.20.9.6
-ip host SW1-St 172.20.12.18
-ip host AP1-St 172.20.12.16
 ip host PCD 172.20.13.134
-ip cef
+ip host AP1-St 172.20.12.16
+ip host SW1-St 172.20.12.18
+ip host RT1-St 10.0.0.6
+ip host PCC 172.20.9.6
+ip host AP1-Pl 172.20.8.154
+ip host SW1-Pl 172.20.8.146
+ip host RT1-Pl 10.0.0.2
+ip host PCB 172.20.2.6
+ip host PCA 172.20.3.6
+ip host DHCP-SRV 172.20.0.196
+ip host AP1-Zg 172.20.0.165
+ip host WLC1-Zg 172.20.0.230
+ip host SW2-Zg 172.20.0.229
+ip host SW1-Zg 172.20.0.228
+ip host MLS2-Zg 172.20.0.154
+ip host MLS1-Zg 172.20.0.158
+ip host RT1-Zg 10.0.0.1
 login block-for 300 attempts 3 within 120
-no ipv6 cef
+!
+!
+crypto pki trustpoint TP-self-signed-2721833344
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2721833344
+ revocation-check none
+ rsakeypair TP-self-signed-2721833344
+!
+!
+crypto pki certificate chain TP-self-signed-2721833344
+ certificate self-signed 01
+  3082022B 30820194 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 32373231 38333333 3434301E 170D3933 30333031 30303031 
+  30315A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 37323138 
+  33333334 3430819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281 
+  8100C49F 2E26738B F7D4FEBC AC08DF16 74A701FF 2DB04784 119CD1AE 4C56B8D9 
+  62212361 D4441136 C1E8117F 6F9C0498 54E99DA1 23397308 AEA3A0BC 3A4FF6C8 
+  E2832E02 747CBDD0 5E954EC8 BA580FD0 75517E32 9BF97E55 5819A722 44706509 
+  81DF7AC6 1EA0D44B 046B5CA2 CDB71727 34F80142 C2B8581A 61193B15 6A639311 
+  BF770203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 301F0603 
+  551D2304 18301680 14C90D82 C52494BE A914C61C 4C075694 66ADC8D4 42301D06 
+  03551D0E 04160414 C90D82C5 2494BEA9 14C61C4C 07569466 ADC8D442 300D0609 
+  2A864886 F70D0101 05050003 81810006 AFD57748 4E1677DF 00C5D21B 0070BB12 
+  13818F2C C2B56DC2 0F4FD5D3 C8717262 5856554A 0585798F 688C7F0E B6A8E91D 
+  B8015E06 9ADE175A 18D77690 115A7E30 51DB2B2E 79428BC7 3A0C2B44 CF314D30 
+  B6A1CE14 F1C55AB3 30682636 516CDB47 26E3AA29 67901156 6A557D9D A0361776 
+  48CCF6CF 5BA6F327 4DDA4D5E 1CD9F0
+  	quit
+!
+!
 !
 !
 !
 spanning-tree mode pvst
 spanning-tree extend system-id
 !
+vlan internal allocation policy ascending
 !
-! 
-!
-!
-!
+ip ssh version 2
 !
 !
 !
 !
 !
-!
-!
-!
-!
-interface Ethernet0/0
+interface FastEthernet0/1
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet0/1
+interface FastEthernet0/2
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet0/2
+interface FastEthernet0/3
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet0/3
+interface FastEthernet0/4
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet1/0
+interface FastEthernet0/5
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet1/1
+interface FastEthernet0/6
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet1/2
+interface FastEthernet0/7
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet1/3
+interface FastEthernet0/8
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet2/0
+interface FastEthernet0/9
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet2/1
+interface FastEthernet0/10
  switchport access vlan 20
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet2/2
+interface FastEthernet0/11
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet2/3
+interface FastEthernet0/12
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet3/0
+interface FastEthernet0/13
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet3/1
+interface FastEthernet0/14
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet3/2
+interface FastEthernet0/15
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet3/3
+interface FastEthernet0/16
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet4/0
+interface FastEthernet0/17
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet4/1
+interface FastEthernet0/18
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet4/2
+interface FastEthernet0/19
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet4/3
+interface FastEthernet0/20
  description Connection to PCB
  switchport access vlan 30
  switchport mode access
  switchport voice vlan 40
+ spanning-tree portfast
 !
-interface Ethernet5/0
+interface FastEthernet0/21
  description Connection to AP1-Zg
- switchport trunk allowed vlan 5,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 5
+ switchport trunk allowed vlan 5,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet5/1
- switchport trunk allowed vlan 5,50,60
- switchport trunk encapsulation dot1q
+interface FastEthernet0/22
  switchport trunk native vlan 5
+ switchport trunk allowed vlan 5,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet5/2
+interface FastEthernet0/23
  description Connection to WLC1-Zg
- switchport trunk allowed vlan 5,6,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 6
+ switchport trunk allowed vlan 5,6,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet5/3
+interface FastEthernet0/24
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet6/0
+interface GigabitEthernet0/1
  description Connection to MLS1-Zg
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet6/1
+interface GigabitEthernet0/2
  description Connection to MLS2-Zg
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet6/2
-!
-interface Ethernet6/3
+interface Vlan1
+ no ip address
+ shutdown
 !
 interface Vlan6
  description Management Interface
@@ -229,14 +261,8 @@ interface Vlan6
  ipv6 address 2001:A:0:5::5/64
 !
 ip default-gateway 172.20.0.225
-ip forward-protocol nd
-!
 ip http server
-!
-ip route 0.0.0.0 0.0.0.0 172.20.0.225
-ip ssh version 2
-ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
-ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip http secure-server
 !
 ip access-list standard SNMP_ACL
  permit 172.20.0.197
@@ -246,32 +272,21 @@ ip access-list standard SSH_ACL
  permit 172.20.9.0 0.0.0.127
  permit 172.20.13.128 0.0.0.127
 !
-!
-logging snmp-trap emergencies
-logging snmp-trap alerts
-logging snmp-trap critical
-logging snmp-trap errors
-logging snmp-trap warnings
-logging snmp-trap informational
 logging host 172.20.0.197
-!
 !
 snmp-server community cisco RO SNMP_ACL
 !
-control-plane
-!
+vstack
 banner motd ^C
 Welcome to SW2-Zg!
 ^C
 !
 line con 0
- logging synchronous
-line aux 0
 line vty 0 4
  login local
  transport input ssh
+line vty 5 15
+ login
 !
 ntp server 203.0.113.1
-!
-!
 end

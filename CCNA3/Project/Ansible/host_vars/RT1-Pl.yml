@@ -140,29 +140,29 @@ gre_tunnels:
     description: Pula to Zagreb
     ip: 10.0.0.2
     mask: 255.255.255.252
-    source: 192.168.1.19
-    destination: 192.168.1.18
+    source: 172.16.201.194
+    destination: 172.16.201.193
 
   - name: Tunnel2
     description: Pula to Split
     ip: 10.0.0.9
     mask: 255.255.255.252
-    source: 192.168.1.19
-    destination: 192.168.1.20
+    source: 172.16.201.194
+    destination: 172.16.201.195
     
 ipsec_peers:
-  - address: 203.0.113.2
+  - address: 172.16.201.193
     key: z4gr3bPvl4
     acl_name: ZAGREB-ACL-PULA
-    src_ip: 203.0.113.3
-    dst_ip: 203.0.113.2
+    src_ip: 172.16.201.194
+    dst_ip: 172.16.201.193
     seq: 10
 
-  - address: 203.0.113.4
+  - address: 172.16.201.195
     key: Pvl4$pl1t
     acl_name: PULA-ACL-SPLIT
-    src_ip: 203.0.113.3
-    dst_ip: 203.0.113.4
+    src_ip: 172.16.201.194
+    dst_ip: 172.16.201.195
     seq: 30
 
 ospf_processes:
@@ -188,7 +188,7 @@ static_routes:
   # Default route
   - dest: "0.0.0.0"
     prefix: 0
-    next_hop: "192.168.1.1"
+    next_hop: "172.16.201.254"
 
 nat:
   inside_interfaces:

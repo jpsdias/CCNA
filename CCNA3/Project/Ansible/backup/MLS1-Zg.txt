@@ -1,67 +1,221 @@
 Building configuration...
 
-Current configuration : 9093 bytes
+Current configuration : 16480 bytes
 !
-! Last configuration change at 21:12:53 UTC Mon Mar 2 2026 by cisco
-! NVRAM config last updated at 21:12:56 UTC Mon Mar 2 2026 by cisco
+! Last configuration change at 00:58:33 UTC Tue Mar 3 2026 by cisco
+! NVRAM config last updated at 00:58:35 UTC Tue Mar 3 2026 by cisco
 !
-version 15.2
+version 16.12
+no service pad
 service timestamps debug datetime msec
 service timestamps log datetime msec
 service password-encryption
 service compress-config
+! Call-home is enabled by Smart-Licensing.
+service call-home
+platform punt-keepalive disable-kernel-core
+platform management port rate-limt-enabled
 !
 hostname MLS1-Zg
 !
-boot-start-marker
-boot-end-marker
 !
+vrf definition Mgmt-vrf
+ !
+ address-family ipv4
+ exit-address-family
+ !
+ address-family ipv6
+ exit-address-family
 !
-enable secret 5 $1$rSOl$qJF4M755CZSzxJGEpcuy70
+enable secret 9 $14$rSOl$GllKk8dhzh312k$ygMIwZaaW5lAZFq4HVHi0pr.ZSEkmHZOgYF8Q7yE8Vc
 !
-username cisco privilege 15 secret 5 $1$LOaf$uEsBGBtWk7QpGd3nQdLnZ1
 no aaa new-model
+switch 1 provision ws-c3650-24ps
+!
+!
+!
+!
+call-home
+ ! If contact email address in call-home is configured as sch-smart-licensing@cisco.com
+ ! the email address configured in Cisco Smart License Portal will be used as contact email address to send SCH notifications.
+ contact-email-addr sch-smart-licensing@cisco.com
+ profile "CiscoTAC-1"
+  active
+  destination transport-method http
+  no destination transport-method email
+ip routing
 !
 !
 !
 !
 !
-!
-!
-!
-no ip domain-lookup
-ip domain-name isepacademy.ccna.itn.com
-ip host MLS2-Zg 172.20.0.154
-ip host RT1-St 172.20.12.193
-ip host RT1-Pl 172.20.11.1
-ip host RT1-Zg 203.0.113.1
-ip host PCD 172.20.13.134
-ip host AP1-St 172.20.12.16
-ip host SW1-St 172.20.12.18
-ip host PCC 172.20.9.6
 ip host AP1-Pl 172.20.8.154
-ip host SW1-Pl 172.20.8.146
-ip host PCB 172.20.2.6
-ip host PCA 172.20.3.6
-ip host DHCP-SRV 172.20.0.196
+ip host AP1-St 172.20.12.16
 ip host AP1-Zg 172.20.0.165
-ip host WLC1-Zg 172.20.0.230
-ip host SW2-Zg 172.20.0.229
-ip host SW1-Zg 172.20.0.228
+ip host DHCP-SRV 172.20.0.196
 ip host MLS1-Zg 172.20.0.158
-ip host SW0 10.0.0.17
-ip cef
+ip host MLS2-Zg 172.20.0.154
+ip host PCA 172.20.3.6
+ip host PCB 172.20.2.6
+ip host PCC 172.20.9.6
+ip host PCD 172.20.13.134
+ip host RT1-Pl 10.0.0.2
+ip host RT1-St 10.0.0.6
+ip host RT1-Zg 10.0.0.1
+ip host SW1-Pl 172.20.8.146
+ip host SW1-St 172.20.12.18
+ip host SW1-Zg 172.20.0.228
+ip host SW2-Zg 172.20.0.229
+ip host WLC1-Zg 172.20.0.230
+no ip domain lookup
+ip domain name isepacademy.ccna.itn.com
+!
+!
+!
 login block-for 300 attempts 3 within 120
+login on-success log
 ipv6 unicast-routing
-ipv6 cef
 !
 !
+!
+!
+!
+!
+!
+no device-tracking logging theft
+!
+crypto pki trustpoint SLA-TrustPoint
+ enrollment pkcs12
+ revocation-check crl
+!
+crypto pki trustpoint TP-self-signed-4153963974
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-4153963974
+ revocation-check none
+ rsakeypair TP-self-signed-4153963974
+!
+!
+crypto pki certificate chain SLA-TrustPoint
+ certificate ca 01
+  30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030 
+  32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363 
+  6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934 
+  3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305 
+  43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720 
+  526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 
+  82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D 
+  CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520 
+  1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE 
+  4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC 
+  7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188 
+  68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7 
+  C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191 
+  C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44 
+  DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201 
+  06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85 
+  4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500 
+  03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905 
+  604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B 
+  D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8 
+  467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C 
+  7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B 
+  5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678 
+  80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB 
+  418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0 
+  D697DF7F 28
+  	quit
+crypto pki certificate chain TP-self-signed-4153963974
+ certificate self-signed 01
+  30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  69666963 6174652D 34313533 39363339 3734301E 170D3236 30333032 31393537 
+  31365A17 0D333030 31303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D34 31353339 
+  36333937 34308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201 
+  0A028201 01009825 CD540F1A 289076BE 4C1C700B 745B516A 1ABCB617 5F26D458 
+  C2625AF7 80C91202 B96486D4 67397329 99FB5336 27D70E0C 7952CAD5 CA026480 
+  C43802CE EDE72702 AF2B9439 5DDF826F 409EF095 A8BC3747 B37B0D4D 0CED4F70 
+  8ACA3F15 A3C62093 BE62230E C32727A3 D00A5797 772CEFE5 A2C6DDA6 1E6FB6BB 
+  E031FC42 A74590E3 A4FE39E2 D8E97BB4 DB971A65 2BAEE615 B14CBAB2 1AB361D7 
+  D096B4D5 A1C09D17 4FD1D6B7 91FE7549 B34492FF 3DE2755A C0F96056 8F715E5E 
+  CF4E6F45 01F09499 968ADDA3 A7E5FD0D E64240B9 C416E531 BD00C68B EA48106E 
+  00FAEEEE 27643551 7BB34E08 55B181A5 249B94C0 1DD0008F D2499726 77DFEAD0 
+  389A43DD 45490203 010001A3 53305130 0F060355 1D130101 FF040530 030101FF 
+  301F0603 551D2304 18301680 14CD0D23 FB5FB334 54D47A42 BD41A0CD 1DB49E35 
+  D4301D06 03551D0E 04160414 CD0D23FB 5FB33454 D47A42BD 41A0CD1D B49E35D4 
+  300D0609 2A864886 F70D0101 05050003 82010100 7711CE29 03A34894 2409CCB6 
+  8BBD3650 6153F65D 7E2789F9 87BC98F1 D87C7CE3 8CF9D6F1 BCB0E56A 6C11F4C0 
+  223786BA 115DFB57 642499A7 B811188C A42DAD90 FA28C87A 7E5A484F 90743387 
+  465E8D15 646B637C A13586C2 0C91B336 8FE1FE07 90ECA721 67FB0A3D 199DDA33 
+  D7E74CCE 898A0EEC 7ACCF840 AABEFD42 67B0FF66 0933BCB2 E9EA301D 26EE3414 
+  003C9A80 A3BEA676 A656CDE9 471FBCBD 43C5E11F 804F16BB C1F47011 52EC3364 
+  294385D5 7637F404 5D9644AA 3F05FF2A C9AA3A4D E4D5A784 59F9D92E 54134150 
+  66C2F89A EF157D39 6CC7C0F6 FB799757 0EBC1629 A2BFACC1 FE56E2A3 2FE93718 
+  1EF98C8B 3BDB2BC4 261DCC57 DB61045D 70E05BF0
+  	quit
+!
+!
+license boot level ipservicesk9
+!
+!
+diagnostic bootup level minimal
 !
 spanning-tree mode rapid-pvst
 spanning-tree extend system-id
 spanning-tree vlan 5-6,10,20,30 priority 24576
 spanning-tree vlan 40,50,60 priority 28672
+memory free low-watermark processor 79468
 !
+username cisco privilege 15 secret 9 $14$LOaf$0PMRU.QMR6aiDU$lrjdQHw6fDys4fAw3K6av3N2nMB6ljUPazgJrpvV5kk
+!
+redundancy
+ mode sso
+!
+!
+!
+!
+!
+transceiver type all
+ monitoring
+!
+!
+class-map match-any system-cpp-police-topology-control
+  description Topology control
+class-map match-any system-cpp-police-sw-forward
+  description Sw forwarding, L2 LVX data, LOGGING
+class-map match-any system-cpp-default
+  description EWLC control, EWLC data, Inter FED 
+class-map match-any system-cpp-police-sys-data
+  description Learning cache ovfl, High Rate App, Exception, EGR Exception, NFL SAMPLED DATA, RPF Failed
+class-map match-any system-cpp-police-punt-webauth
+  description Punt Webauth
+class-map match-any system-cpp-police-l2lvx-control
+  description L2 LVX control packets
+class-map match-any system-cpp-police-forus
+  description Forus Address resolution and Forus traffic
+class-map match-any system-cpp-police-multicast-end-station
+  description MCAST END STATION
+class-map match-any system-cpp-police-multicast
+  description Transit Traffic and MCAST Data
+class-map match-any system-cpp-police-l2-control
+  description L2 control
+class-map match-any system-cpp-police-dot1x-auth
+  description DOT1X Auth
+class-map match-any system-cpp-police-data
+  description ICMP redirect, ICMP_GEN and BROADCAST
+class-map match-any system-cpp-police-stackwise-virt-control
+  description Stackwise Virtual
+class-map match-any non-client-nrt-class
+class-map match-any system-cpp-police-routing-control
+  description Routing control and Low Latency
+class-map match-any system-cpp-police-protocol-snooping
+  description Protocol snooping
+class-map match-any system-cpp-police-dhcp-snooping
+  description DHCP snooping
+class-map match-any system-cpp-police-system-critical
+  description System Critical and Gold Pkt
+!
+policy-map system-cpp-policy
 !
 ! 
 !
@@ -73,187 +227,196 @@ spanning-tree vlan 40,50,60 priority 28672
 !
 !
 !
-!
-!
-!
 interface Port-channel1
  description Port-Channel Fa0/2-3
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet0/0
+interface GigabitEthernet0/0
+ vrf forwarding Mgmt-vrf
+ no ip address
+ shutdown
+ negotiation auto
+!
+interface GigabitEthernet1/0/1
  description Connection to RT1-Zg
  no switchport
  ip address 172.20.0.158 255.255.255.252
  ip ospf 100 area 0
  ipv6 address 2001:A:0:8::2/64
 !
-interface Ethernet0/1
+interface GigabitEthernet1/0/2
  description Port-Channel 1 member
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
  channel-group 1 mode on
 !
-interface Ethernet0/2
+interface GigabitEthernet1/0/3
  description Port-Channel 1 member
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
  channel-group 1 mode on
 !
-interface Ethernet0/3
+interface GigabitEthernet1/0/4
  description Connection to SW2-Zg
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet1/0
+interface GigabitEthernet1/0/5
  description Connection to SW1-Zg
- switchport trunk allowed vlan 5,6,10,20,30,40,50,60
- switchport trunk encapsulation dot1q
  switchport trunk native vlan 7
+ switchport trunk allowed vlan 5,6,10,20,30,40,50,60
  switchport mode trunk
  switchport nonegotiate
 !
-interface Ethernet1/1
+interface GigabitEthernet1/0/6
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet1/2
+interface GigabitEthernet1/0/7
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet1/3
+interface GigabitEthernet1/0/8
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet2/0
+interface GigabitEthernet1/0/9
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet2/1
+interface GigabitEthernet1/0/10
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet2/2
+interface GigabitEthernet1/0/11
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet2/3
+interface GigabitEthernet1/0/12
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet3/0
+interface GigabitEthernet1/0/13
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet3/1
+interface GigabitEthernet1/0/14
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet3/2
+interface GigabitEthernet1/0/15
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet3/3
+interface GigabitEthernet1/0/16
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet4/0
+interface GigabitEthernet1/0/17
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet4/1
+interface GigabitEthernet1/0/18
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet4/2
+interface GigabitEthernet1/0/19
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet4/3
+interface GigabitEthernet1/0/20
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet5/0
+interface GigabitEthernet1/0/21
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet5/1
+interface GigabitEthernet1/0/22
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet5/2
+interface GigabitEthernet1/0/23
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet5/3
+interface GigabitEthernet1/0/24
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet6/0
+interface GigabitEthernet1/1/1
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet6/1
+interface GigabitEthernet1/1/2
  description Unused Port
  switchport access vlan 99
  switchport mode access
  shutdown
 !
-interface Ethernet6/2
+interface GigabitEthernet1/1/3
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
 !
-interface Ethernet6/3
+interface GigabitEthernet1/1/4
+ description Unused Port
+ switchport access vlan 99
+ switchport mode access
+ shutdown
+!
+interface Vlan1
+ no ip address
 !
 interface Vlan5
  description Vlan APs
@@ -297,7 +460,7 @@ interface Vlan10
 interface Vlan20
  description Vlan Administration
  ip address 172.20.3.2 255.255.255.0
- ip helper-address 172.20.3.5 
+ ip helper-address 172.20.3.5
  standby version 2
  standby 20 ip 172.20.3.1
  standby 20 priority 110
@@ -313,7 +476,7 @@ interface Vlan20
 interface Vlan30
  description Vlan Staff
  ip address 172.20.2.2 255.255.255.0
- ip helper-address 172.20.2.5 
+ ip helper-address 172.20.2.5
  standby version 2
  standby 30 ip 172.20.2.1
  standby 30 priority 110
@@ -329,7 +492,7 @@ interface Vlan30
 interface Vlan40
  description Vlan VoIP
  ip address 172.20.6.2 255.255.254.0
- ip helper-address 172.20.6.5 
+ ip helper-address 172.20.6.5
  standby version 2
  standby 40 ip 172.20.6.1
  standby 40 preempt
@@ -343,7 +506,7 @@ interface Vlan40
 interface Vlan50
  description Vlan Wireless
  ip address 172.20.4.2 255.255.254.0
- ip helper-address 172.20.4.5 
+ ip helper-address 172.20.4.5
  standby version 2
  standby 50 ip 172.20.4.1
  standby 50 preempt
@@ -357,8 +520,8 @@ interface Vlan50
 interface Vlan60
  description Vlan Guests
  ip address 172.20.1.2 255.255.255.0
+ ip helper-address 172.20.1.5
  ip access-group GUEST_ACL in
- ip helper-address 172.20.1.5 
  standby version 2
  standby 60 ip 172.20.1.1
  standby 60 preempt
@@ -383,26 +546,27 @@ router ospf 100
 !
 ip default-gateway 172.20.0.157
 ip forward-protocol nd
-!
 ip http server
-!
+ip http authentication local
+ip http secure-server
 ip route 0.0.0.0 0.0.0.0 172.20.0.157
 ip ssh version 2
 ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
 ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
 !
+!
 ip access-list standard SNMP_ACL
- permit 172.20.0.197
+ 10 permit 172.20.0.197
 ip access-list standard SSH_ACL
- permit 172.20.3.0 0.0.0.255
- permit 172.20.2.0 0.0.0.255
- permit 172.20.9.0 0.0.0.127
- permit 172.20.13.128 0.0.0.127
+ 10 permit 172.20.3.0 0.0.0.255
+ 20 permit 172.20.2.0 0.0.0.255
+ 30 permit 172.20.9.0 0.0.0.127
+ 40 permit 172.20.13.128 0.0.0.127
 !
 ip access-list extended GUEST_ACL
- deny   ip 172.20.1.0 0.0.0.255 172.20.0.0 0.0.255.255
- deny   ip 172.20.1.0 0.0.0.255 10.0.0.0 0.0.0.15
- permit ip 172.20.1.0 0.0.0.255 any
+ 10 deny   ip 172.20.1.0 0.0.0.255 172.20.0.0 0.0.255.255
+ 20 deny   ip 172.20.1.0 0.0.0.255 10.0.0.0 0.0.0.15
+ 30 permit ip 172.20.1.0 0.0.0.255 any
 !
 logging snmp-trap emergencies
 logging snmp-trap alerts
@@ -416,19 +580,28 @@ logging host 172.20.0.197
 snmp-server community cisco RO SNMP_ACL
 !
 control-plane
+ service-policy input system-cpp-policy
 !
-banner motd ^C
+banner motd ^CC
 Welcome to MLS1-Zg!
 ^C
 !
 line con 0
  logging synchronous
+ stopbits 1
 line aux 0
+ stopbits 1
 line vty 0 4
  login local
  transport input ssh
+line vty 5 15
+ login
 !
 ntp server 203.0.113.1
+!
+!
+!
+!
 !
 !
 end

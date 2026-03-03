@@ -14,12 +14,12 @@
         dest: 172.20.0.153
       tags: rt1_zg
     
-    - name: Test reachability to RT1-Zg (Gig0/2.102)
+    - name: Test reachability to RT1-Zg (Gig0/2) Zg-Pl
       cisco.ios.ios_ping:
         dest: 10.0.0.1
       tags: rt1_zg
 
-    - name: Test reachability to RT1-Zg (Gig0/2.103)
+    - name: Test reachability to RT1-Zg (Gig0/2) Zg-St
       cisco.ios.ios_ping:
         dest: 10.0.0.5
       tags: rt1_zg
@@ -180,10 +180,10 @@
         dest: 172.20.3.6
       tags: host_zg
 
-    # - name: PCB
-    #   cisco.ios.ios_ping:
-    #     dest: 172.20.2.6
-    #   tags: host_zg
+    - name: PCB
+      cisco.ios.ios_ping:
+        dest: 172.20.2.6
+      tags: host_zg
 
     - name: Test reachability to DHCP-SRV
       cisco.ios.ios_ping:
@@ -215,12 +215,12 @@
         dest: 172.20.8.193
       tags: rt1_pl
     
-    - name: Test reachability to RT1-Pl (Gig0/2.102)
+    - name: Test reachability to RT1-Pl (Gig0/2) Pl-Zg
       cisco.ios.ios_ping:
         dest: 10.0.0.2
       tags: rt1_pl
 
-    - name: Test reachability to RT1-Pl (Gig0/2.203)
+    - name: Test reachability to RT1-Pl (Gig0/2) Pl-St
       cisco.ios.ios_ping:
         dest: 10.0.0.9
       tags: rt1_pl
@@ -281,14 +281,15 @@
         dest: 172.20.12.33
       tags: rt1_st
     
-    - name: Test reachability to RT1-St (Gig0/2.103)
+    - name: Test reachability to RT1-St (Gig0/2) St-Zg
       cisco.ios.ios_ping:
         dest: 10.0.0.6
       tags: rt1_st
 
-    - name: Test reachability to RT1-St (Gig0/2.203)
+    - name: Test reachability to RT1-St (Gig0/2) St-Pl
       cisco.ios.ios_ping:
         dest: 10.0.0.10
+      tags: rt1_st
 
     - name: Test reachability to RT1-St (Lo0 Multimedia)
       cisco.ios.ios_ping:

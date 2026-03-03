@@ -1,10 +1,11 @@
 Building configuration...
 
+
   
-Current configuration : 7011 bytes
+Current configuration : 8093 bytes
 !
-! Last configuration change at 21:12:04 UTC Mon Mar 2 2026 by cisco
-! NVRAM config last updated at 21:12:09 UTC Mon Mar 2 2026 by cisco
+! Last configuration change at 00:56:26 UTC Tue Mar 3 2026 by cisco
+! NVRAM config last updated at 00:56:23 UTC Tue Mar 3 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -21,13 +22,7 @@ security passwords min-length 10
 enable secret 5 $1$B0OP$.ZiN73.3QPcN3p2h8M58i1
 !
 no aaa new-model
-!
-!
-!
-mmi polling-interval 60
-no mmi auto-configure
-no mmi pvc
-mmi snmp-timeout 180
+memory-size iomem 5
 !
 !
 !
@@ -36,15 +31,6 @@ mmi snmp-timeout 180
 !
 !
 !
-!
-!
-!
-!
-!
-!
-!
-
-
 !
 ip dhcp excluded-address 172.20.13.128 172.20.13.133
 ip dhcp excluded-address 172.20.13.0 172.20.13.5
@@ -71,7 +57,6 @@ ip dhcp pool VoIP
 !
 no ip domain lookup
 ip domain name isepacademy.ccna.itn.com
-ip host SW0 10.0.0.17
 ip host MLS1-Zg 172.20.0.158
 ip host MLS2-Zg 172.20.0.154
 ip host SW1-Zg 172.20.0.228
@@ -87,13 +72,12 @@ ip host PCC 172.20.9.6
 ip host SW1-St 172.20.12.18
 ip host AP1-St 172.20.12.16
 ip host PCD 172.20.13.134
-ip host RT1-Zg 203.0.113.1
-ip host RT1-Pl 172.20.11.1
-ip host RT1-St 172.20.12.193
+ip host RT1-Zg 10.0.0.1
+ip host RT1-Pl 10.0.0.2
+ip host RT1-St 10.0.0.6
 ip cef
 login block-for 300 attempts 3 within 120
 ipv6 unicast-routing
-ipv6 cef
 ipv6 dhcp pool Staff-v6
  address prefix 2001:C:0:3::/64
 !
@@ -106,6 +90,7 @@ ipv6 dhcp pool Guests-St-v6
 ipv6 dhcp pool VoIP-v6
  address prefix 2001:C:0:1::/64
 !
+ipv6 cef
 !
 multilink bundle-name authenticated
 !
@@ -115,17 +100,32 @@ multilink bundle-name authenticated
 !
 !
 !
+voice-card 0
 !
 !
+!
+!
+!
+!
+!
+!
+vxml logging-tag
+license udi pid CISCO2911/K9 sn FCZ160270GA
+license accept end user agreement
+license boot module c2900 technology-package securityk9
+license boot module c2900 technology-package uck9
+!
+!
+vtp mode transparent
 username cisco privilege 15 secret 5 $1$xhnB$2I4V2Xh4VR7IvUsM5mdpK/
 !
 redundancy
 !
 !
+!
+!
+!
 ! 
-!
-!
-!
 !
 crypto isakmp policy 100
  encr aes
@@ -133,6 +133,8 @@ crypto isakmp policy 100
  group 5
 crypto isakmp key z4gr3b$pl1t address 203.0.113.2    
 crypto isakmp key Pvl4$pl1t address 203.0.113.3    
+crypto isakmp key z4gr3b$pl1t address 172.16.201.193 
+crypto isakmp key Pvl4$pl1t address 172.16.201.194 
 !
 !
 crypto ipsec transform-set TSET esp-aes esp-sha-hmac 
@@ -142,10 +144,12 @@ crypto ipsec transform-set TSET esp-aes esp-sha-hmac
 !
 crypto map CROATIA 20 ipsec-isakmp 
  set peer 203.0.113.2
+ set peer 172.16.201.193
  set transform-set TSET 
  match address ZAGREB-ACL-SPLIT
 crypto map CROATIA 30 ipsec-isakmp 
  set peer 203.0.113.3
+ set peer 172.16.201.194
  set transform-set TSET 
  match address PULA-ACL-SPLIT
 !
@@ -169,29 +173,35 @@ interface Tunnel1
  description Split to Zagreb
  ip address 10.0.0.6 255.255.255.252
  ip ospf 100 area 0
- tunnel source 192.168.1.20
- tunnel destination 192.168.1.18
+ tunnel source 172.16.201.195
+ tunnel destination 172.16.201.193
 !
 interface Tunnel2
  description Split to Pula
  ip address 10.0.0.10 255.255.255.252
  ip ospf 100 area 0
- tunnel source 192.168.1.20
- tunnel destination 192.168.1.19
+ tunnel source 172.16.201.195
+ tunnel destination 172.16.201.194
 !
-interface Ethernet0/0
+interface Embedded-Service-Engine0/0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
  no ip address
  shutdown
  duplex auto
+ speed auto
 !
-interface Ethernet0/1
+interface GigabitEthernet0/1
  no ip address
  ip nat inside
  ip virtual-reassembly in
  ip ospf 100 area 0
  duplex auto
+ speed auto
 !
-interface Ethernet0/1.5
+interface GigabitEthernet0/1.5
  description Trunk for Vlan 5 APs
  encapsulation dot1Q 5
  ip address 172.20.12.25 255.255.255.248
@@ -200,7 +210,7 @@ interface Ethernet0/1.5
  ip ospf 100 area 0
  ipv6 address 2001:C:0:6::1/64
 !
-interface Ethernet0/1.6
+interface GigabitEthernet0/1.6
  description Trunk for Vlan 6 Management
  encapsulation dot1Q 6
  ip address 172.20.12.17 255.255.255.248
@@ -209,7 +219,7 @@ interface Ethernet0/1.6
  ip ospf 100 area 0
  ipv6 address 2001:C:0:7::1/64
 !
-interface Ethernet0/1.30
+interface GigabitEthernet0/1.30
  description Trunk for Vlan 30 Staff
  encapsulation dot1Q 30
  ip address 172.20.13.129 255.255.255.128
@@ -221,7 +231,7 @@ interface Ethernet0/1.30
  ipv6 nd other-config-flag
  ipv6 dhcp server Staff-v6
 !
-interface Ethernet0/1.40
+interface GigabitEthernet0/1.40
  description Trunk for Vlan 40 VoIP
  encapsulation dot1Q 40
  ip address 172.20.12.129 255.255.255.192
@@ -230,7 +240,7 @@ interface Ethernet0/1.40
  ip ospf 100 area 0
  ipv6 address 2001:C:0:1::1/64
 !
-interface Ethernet0/1.50
+interface GigabitEthernet0/1.50
  description Trunk for Vlan 50 Wireless
  encapsulation dot1Q 50
  ip address 172.20.13.1 255.255.255.128
@@ -242,7 +252,7 @@ interface Ethernet0/1.50
  ipv6 nd other-config-flag
  ipv6 dhcp server Wireless-St-v6
 !
-interface Ethernet0/1.60
+interface GigabitEthernet0/1.60
  description Trunk for Vlan 60 Guests
  encapsulation dot1Q 60
  ip address 172.20.12.33 255.255.255.224
@@ -255,39 +265,46 @@ interface Ethernet0/1.60
  ipv6 nd other-config-flag
  ipv6 dhcp server Guests-St-v6
 !
-interface Ethernet0/2
+interface GigabitEthernet0/2
  description Connection to Wan
  ip address dhcp
  ip nat outside
  ip virtual-reassembly in
  ip ospf 100 area 0
  duplex auto
+ speed auto
  crypto map CROATIA
 !
-interface Ethernet0/3
+interface Serial0/0/0
  no ip address
- duplex auto
+ shutdown
+ clock rate 2000000
+!
+interface Serial0/0/1
+ no ip address
+ shutdown
+ clock rate 2000000
 !
 router ospf 100
  router-id 3.3.3.3
- passive-interface Ethernet0/1.5
- passive-interface Ethernet0/1.6
- passive-interface Ethernet0/1.30
- passive-interface Ethernet0/1.40
- passive-interface Ethernet0/1.50
- passive-interface Ethernet0/1.60
+ passive-interface GigabitEthernet0/1.5
+ passive-interface GigabitEthernet0/1.6
+ passive-interface GigabitEthernet0/1.30
+ passive-interface GigabitEthernet0/1.40
+ passive-interface GigabitEthernet0/1.50
+ passive-interface GigabitEthernet0/1.60
  passive-interface Loopback0
  passive-interface Loopback2
  default-information originate
 !
 ip forward-protocol nd
 !
-!
 no ip http server
 no ip http secure-server
-ip nat inside source list NAT_ACL interface Ethernet0/2 overload
-ip nat inside source static tcp 172.20.12.18 22 interface Ethernet0/2 2225
-ip route 0.0.0.0 0.0.0.0 192.168.1.1
+!
+ip nat inside source list NAT_ACL interface GigabitEthernet0/2 overload
+ip nat inside source static tcp 172.20.12.18 22 interface GigabitEthernet0/2 2225
+ip route 0.0.0.0 0.0.0.0 172.16.201.254
 ip ssh version 2
 !
 ip access-list standard NAT_ACL
@@ -308,9 +325,11 @@ ip access-list extended GUEST_ACL
 ip access-list extended PULA-ACL-SPLIT
  permit gre host 203.0.113.4 host 203.0.113.3
  deny   ip any any
+ permit gre host 172.16.201.195 host 172.16.201.194
 ip access-list extended ZAGREB-ACL-SPLIT
  permit gre host 203.0.113.4 host 203.0.113.2
  deny   ip any any
+ permit gre host 172.16.201.195 host 172.16.201.193
 !
 logging snmp-trap emergencies
 logging snmp-trap alerts
@@ -319,30 +338,51 @@ logging snmp-trap errors
 logging snmp-trap warnings
 logging snmp-trap informational
 logging host 172.20.0.197
-ipv6 ioam timestamp
+!
 !
 snmp-server community cisco RO SNMP_ACL
 !
-!
 control-plane
 !
+ !
+ !
+ !
+ !
+!
+mgcp behavior rsip-range tgcp-only
+mgcp behavior comedia-role none
+mgcp behavior comedia-check-media-src disable
+mgcp behavior comedia-sdp-force disable
+!
+mgcp profile default
 !
 !
 !
 !
 !
 !
-banner motd ^C
+!
+gatekeeper
+ shutdown
+!
+banner motd ^CC
 Welcome to RT1-St!
 ^C
 !
 line con 0
  logging synchronous
 line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
 line vty 0 4
  login local
  transport input ssh
 !
+scheduler allocate 20000 1000
 ntp server 203.0.113.1
 !
 end
