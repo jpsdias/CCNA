@@ -140,3 +140,18 @@ http_server:
   enabled: true
   secure: true
   auth: local
+
+voip_phones:
+  gtw: 172.20.6.1
+  msg: "VoIP-Zg"
+  dial_peers:
+    - name: 1000
+      pattern: "1..."
+      ip: 172.16.201.201
+  lines:
+    - name: 1
+      mac: 0015.63AC.AAF1
+      ext: 1001
+    - name: 2
+      mac: 0015.63AC.AACD
+      ext: 1002

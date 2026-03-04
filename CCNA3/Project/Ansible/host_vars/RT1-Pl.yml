@@ -5,7 +5,9 @@ l3_interfaces:
   - name: "{{ rInt['Gig0/2'] }}"
     description: "Connection to Wan"
     ipv4:
-      dhcp: True
+      # dhcp: True
+      address: 172.16.201.202
+      prefix: 24
 
   - name: Loopback0
     description: "Engineering Network"
@@ -140,30 +142,28 @@ gre_tunnels:
     description: Pula to Zagreb
     ip: 10.0.0.2
     mask: 255.255.255.252
-    source: 172.16.201.194
-    destination: 172.16.201.193
+    source: 172.16.201.202
+    destination: 172.16.201.201
 
   - name: Tunnel2
     description: Pula to Split
     ip: 10.0.0.9
     mask: 255.255.255.252
-    source: 172.16.201.194
-    destination: 172.16.201.195
+    source: 172.16.201.202
+    destination: 172.16.201.200
     
 ipsec_peers:
-  - address: 172.16.201.193
+  - address: 172.16.201.201
     key: z4gr3bPvl4
     acl_name: ZAGREB-ACL-PULA
-    src_ip: 172.16.201.194
-    dst_ip: 172.16.201.193
-    seq: 10
+    src_ip: 172.16.201.202
+    dst_ip: 172.16.201.201
 
-  - address: 172.16.201.195
+  - address: 172.16.201.200
     key: Pvl4$pl1t
     acl_name: PULA-ACL-SPLIT
-    src_ip: 172.16.201.194
-    dst_ip: 172.16.201.195
-    seq: 30
+    src_ip: 172.16.201.202
+    dst_ip: 172.16.201.200
 
 ospf_processes:
   - process_id: 100
@@ -254,3 +254,15 @@ guest_acl:
           wildcard_bits: 0.0.0.63
         destination:
           any: true
+
+voip_phones:
+  gtw: 172.20.8.161
+  msg: "VoIP-Pl"
+  dial_peers:
+    - name: 2000
+      pattern: "2..."
+      ip: 10.0.0.9
+  lines:
+    - name: 1
+      mac: 0015.63FF.5EB9
+      ext: 2001

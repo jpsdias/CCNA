@@ -203,14 +203,31 @@
       tags: ipsec
 
     - name: Configure ACLs for IPsec
-      cisco.ios.ios_config:
-        lines:
-          - permit gre host {{ item.src_ip }} host {{ item.dst_ip }}
-          - deny ip any any
-        parents: ip access-list extended {{ item.acl_name }}
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+            - name: "{{ item.acl_name }}"
+              acl_type: extended
+              aces:
+                - sequence: 10
+                  grant: permit
+                  protocol: gre
+                  source:
+                    host: "{{ item.src_ip }}"
+                  destination:
+                    host: "{{ item.dst_ip }}"
+                - sequence: 20
+                  grant: deny
+                  protocol: ip
+                  source:
+                    any: true
+                  destination:
+                    any: true
+        state: replaced
       loop: "{{ ipsec_peers }}"
       when: ipsec_peers is defined
-      tags: ipsec
+      tags: ipsec_acl
 
     - name: Configure Static Routes
       cisco.ios.ios_static_routes:
@@ -335,6 +352,58 @@
         parents: "interface {{ rInt['Gig0/1'] }}.60"
       when: guest_acl is defined
       tags: guest_acl
+
+    - name: Configure VoIP option
+      cisco.ios.ios_config:
+        lines:
+          - "option 150 ip {{ voip_phones.gtw }}"
+        parents: "ip dhcp pool VoIP"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure telephony service
+      cisco.ios.ios_config:
+        lines:
+          - "max-ephones 58"
+          - "max-dn 128"
+          - "ip source-address {{ voip_phones.gtw }} port 2000"
+          - "cnf-file location flash:"
+          - "load 7912 CP7912080004SCCP080108A.sbin"
+          - "create cnf-files"
+        parents: "telephony-service"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure extensions-dn for VoIP phones
+      cisco.ios.ios_config:
+        lines:
+          - "number {{ item.ext }}"
+        parents: "ephone-dn {{ item.name }}"
+      loop: "{{ voip_phones.lines }}"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure extensions for VoIP phones
+      cisco.ios.ios_config:
+        lines:
+          - "mac-address {{ item.mac }}"
+          - "type 7912"
+          - "button 1:{{ item.name }}"
+        parents: "ephone {{ item.name }}"
+      loop: "{{ voip_phones.lines }}"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure dial-peer for VoIP phones
+      cisco.ios.ios_config:
+        lines:
+          - "description OUTGOING CALLS"
+          - "destination-pattern {{ item.pattern }}"
+          - "session target ipv4:{{ item.ip }}"
+        parents: "dial-peer voice {{ item.name }} voip"
+      loop: "{{ voip_phones.dial_peers }}"
+      when: voip_phones is defined
+      tags: voip
 
     # - name: Get current static routes
     #   cisco.ios.ios_command:

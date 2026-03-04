@@ -8,7 +8,7 @@ l2_interfaces:
     description: "Connection to RT1-St"
     trunk:
       native_vlan: 7
-      allowed_vlans: 5-6,30,50,60
+      allowed_vlans: 5-6,30,40,50,60
 
   - name: "{{ sInt['Fa0/2'] }}"
     description: "Connection to PCD"

@@ -2,10 +2,9 @@ Building configuration...
 
 
   
-Current configuration : 8093 bytes
+Current configuration : 8309 bytes
 !
-! Last configuration change at 00:56:26 UTC Tue Mar 3 2026 by cisco
-! NVRAM config last updated at 00:56:23 UTC Tue Mar 3 2026 by cisco
+! Last configuration change at 21:38:32 UTC Tue Mar 3 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -57,6 +56,7 @@ ip dhcp pool VoIP
 !
 no ip domain lookup
 ip domain name isepacademy.ccna.itn.com
+ip host RT1-Pl 10.0.0.2
 ip host MLS1-Zg 172.20.0.158
 ip host MLS2-Zg 172.20.0.154
 ip host SW1-Zg 172.20.0.228
@@ -73,7 +73,6 @@ ip host SW1-St 172.20.12.18
 ip host AP1-St 172.20.12.16
 ip host PCD 172.20.13.134
 ip host RT1-Zg 10.0.0.1
-ip host RT1-Pl 10.0.0.2
 ip host RT1-St 10.0.0.6
 ip cef
 login block-for 300 attempts 3 within 120
@@ -131,10 +130,8 @@ crypto isakmp policy 100
  encr aes
  authentication pre-share
  group 5
-crypto isakmp key z4gr3b$pl1t address 203.0.113.2    
-crypto isakmp key Pvl4$pl1t address 203.0.113.3    
-crypto isakmp key z4gr3b$pl1t address 172.16.201.193 
-crypto isakmp key Pvl4$pl1t address 172.16.201.194 
+crypto isakmp key z4gr3b$pl1t address 172.16.201.201 
+crypto isakmp key Pvl4$pl1t address 172.16.201.202 
 !
 !
 crypto ipsec transform-set TSET esp-aes esp-sha-hmac 
@@ -145,11 +142,13 @@ crypto ipsec transform-set TSET esp-aes esp-sha-hmac
 crypto map CROATIA 20 ipsec-isakmp 
  set peer 203.0.113.2
  set peer 172.16.201.193
+ set peer 172.16.201.201
  set transform-set TSET 
  match address ZAGREB-ACL-SPLIT
 crypto map CROATIA 30 ipsec-isakmp 
  set peer 203.0.113.3
  set peer 172.16.201.194
+ set peer 172.16.201.202
  set transform-set TSET 
  match address PULA-ACL-SPLIT
 !
@@ -173,15 +172,15 @@ interface Tunnel1
  description Split to Zagreb
  ip address 10.0.0.6 255.255.255.252
  ip ospf 100 area 0
- tunnel source 172.16.201.195
- tunnel destination 172.16.201.193
+ tunnel source 172.16.201.200
+ tunnel destination 172.16.201.201
 !
 interface Tunnel2
  description Split to Pula
  ip address 10.0.0.10 255.255.255.252
  ip ospf 100 area 0
- tunnel source 172.16.201.195
- tunnel destination 172.16.201.194
+ tunnel source 172.16.201.200
+ tunnel destination 172.16.201.202
 !
 interface Embedded-Service-Engine0/0
  no ip address
@@ -267,7 +266,7 @@ interface GigabitEthernet0/1.60
 !
 interface GigabitEthernet0/2
  description Connection to Wan
- ip address dhcp
+ ip address 172.16.201.200 255.255.255.0
  ip nat outside
  ip virtual-reassembly in
  ip ospf 100 area 0
@@ -326,10 +325,12 @@ ip access-list extended PULA-ACL-SPLIT
  permit gre host 203.0.113.4 host 203.0.113.3
  deny   ip any any
  permit gre host 172.16.201.195 host 172.16.201.194
+ permit gre host 172.16.201.200 host 172.16.201.202
 ip access-list extended ZAGREB-ACL-SPLIT
  permit gre host 203.0.113.4 host 203.0.113.2
  deny   ip any any
  permit gre host 172.16.201.195 host 172.16.201.193
+ permit gre host 172.16.201.200 host 172.16.201.201
 !
 logging snmp-trap emergencies
 logging snmp-trap alerts

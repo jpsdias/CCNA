@@ -17,16 +17,16 @@ all:
         routers:
           hosts:
             RT1-Zg:
-              ansible_host: 172.16.201.193
+              ansible_host: 172.16.201.201
             RT1-Pl:
-              ansible_host: 172.16.201.194
+              ansible_host: 172.16.201.202
             RT1-St:
-              ansible_host: 172.16.201.195
+              ansible_host: 172.16.201.200
         servers:
           hosts:
             DHCP-SRV:
               # ansible_host: 172.20.0.196
-              ansible_host: 172.16.201.193
+              ansible_host: 172.16.201.201
               ansible_port: 2222
     layer23:
       children:
@@ -34,11 +34,11 @@ all:
           hosts:
             MLS1-Zg:
               # ansible_host: 172.20.0.158
-              ansible_host: 172.16.201.193
+              ansible_host: 172.16.201.201
               ansible_port: 2223
             MLS2-Zg:
               # ansible_host: 172.20.0.154
-              ansible_host: 172.16.201.193
+              ansible_host: 172.16.201.201
               ansible_port: 2224
     layer2:
       children:
@@ -46,17 +46,17 @@ all:
           hosts:
             SW1-Zg:
               # ansible_host: 172.20.0.228
-              ansible_host: 172.16.201.193
+              ansible_host: 172.16.201.201
               ansible_port: 2225
             SW2-Zg:
               # ansible_host: 172.20.0.229
-              ansible_host: 172.16.201.193
+              ansible_host: 172.16.201.201
               ansible_port: 2226
             SW1-Pl:
               # ansible_host: 172.20.8.146
-              ansible_host: 172.16.201.194
+              ansible_host: 172.16.201.202
               ansible_port: 2225
             SW1-St:
               # ansible_host: 172.20.12.18
-              ansible_host: 172.16.201.195
+              ansible_host: 172.16.201.200
               ansible_port: 2225
