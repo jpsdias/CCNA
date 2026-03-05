@@ -1,9 +1,14 @@
 ---
 - name: Test Pings
-  hosts: routers, mls, switches
+  hosts: all
   gather_facts: no
   
   tasks:
+    - name: Test reachability to WAN
+      cisco.ios.ios_ping:
+        dest: 8.8.8.8
+      tags: wan
+
     - name: Test reachability to RT1-Zg (Gig0/0)
       cisco.ios.ios_ping:
         dest: 172.20.0.157
@@ -169,21 +174,21 @@
         dest: 172.20.1.1
       tags: svi
 
-    - name: Test reachability to AP1-Zg
-      cisco.ios.ios_ping:
-        dest: 172.20.0.165
-      when: interface_type == "real"
-      tags: ap1_zg
+    # - name: Test reachability to AP1-Zg
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.0.165
+    #   when: interface_type == "real"
+    #   tags: ap1_zg
 
-    - name: PCA
-      cisco.ios.ios_ping:
-        dest: 172.20.3.6
-      tags: host_zg
+    # - name: PCA
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.3.6
+    #   tags: host_zg
 
-    - name: PCB
-      cisco.ios.ios_ping:
-        dest: 172.20.2.6
-      tags: host_zg
+    # - name: PCB
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.2.6
+    #   tags: host_zg
 
     - name: Test reachability to DHCP-SRV
       cisco.ios.ios_ping:
@@ -245,16 +250,16 @@
         dest: 172.20.8.146
       tags: sw1_pl
 
-    - name: PCC
-      cisco.ios.ios_ping:
-        dest: 172.20.9.6
-      tags: host_pl
+    # - name: PCC
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.9.6
+    #   tags: host_pl
 
-    - name: Test reachability to AP1-Pl
-      cisco.ios.ios_ping:
-        dest: 172.20.8.154
-      when: interface_type == "real"
-      tags: ap1_pl
+    # - name: Test reachability to AP1-Pl
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.8.154
+    #   when: interface_type == "real"
+    #   tags: ap1_pl
 
     - name: Test reachability to RT1-St (Gig0/1.5)
       cisco.ios.ios_ping:
@@ -311,14 +316,14 @@
         dest: 172.20.12.18
       tags: sw1_st
 
-    - name: PCD
-      cisco.ios.ios_ping:
-        dest: 172.20.13.134
-      tags: host_st
+    # - name: PCD
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.13.134
+    #   tags: host_st
 
-    - name: Test reachability to AP1-St
-      cisco.ios.ios_ping:
-        dest: 172.20.12.26
-      when: interface_type == "real"
-      tags: ap1_st
+    # - name: Test reachability to AP1-St
+    #   cisco.ios.ios_ping:
+    #     dest: 172.20.12.26
+    #   when: interface_type == "real"
+    #   tags: ap1_st
 

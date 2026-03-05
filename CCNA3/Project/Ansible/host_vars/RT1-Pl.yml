@@ -137,33 +137,76 @@ dhcpv6_pools:
   - name: Guests-Pl-v6
     prefix: "2001:B:0:5::/64"
 
-gre_tunnels:
+peer_pub_address: 172.16.201.202
+
+ipsec_peers:
+  - key: "z4gr3bPvl4"
+    address: 172.16.201.201
+    seq: 10
+    acl_name: ZAGREB-ACL-PULA 
+
+  - key: "Pvl4$pl1t"
+    address: 172.16.201.200 
+    seq: 20
+    acl_name: PULA-ACL-SPLIT
+
+tunnels:
   - name: Tunnel0
     description: Pula to Zagreb
-    ip: 10.0.0.2
-    mask: 255.255.255.252
-    source: 172.16.201.202
-    destination: 172.16.201.201
+    ipv4:
+      address: 10.0.0.2
+      prefix: 30
+    tunnel:
+      source: 172.16.201.202
+      destination: 172.16.201.201
 
   - name: Tunnel2
     description: Pula to Split
-    ip: 10.0.0.9
-    mask: 255.255.255.252
-    source: 172.16.201.202
-    destination: 172.16.201.200
+    ipv4:
+      address: 10.0.0.9
+      prefix: 30
+    tunnel:
+      source: 172.16.201.202
+      destination: 172.16.201.200
     
-ipsec_peers:
-  - address: 172.16.201.201
-    key: z4gr3bPvl4
-    acl_name: ZAGREB-ACL-PULA
-    src_ip: 172.16.201.202
-    dst_ip: 172.16.201.201
+ipsec_acls:
+  - acl_name: ZAGREB-ACL-PULA
+    entries:
+      - ace:
+          sequence: 10
+          grant: permit
+          protocol: gre
+          source:
+            host: 172.16.201.202
+          destination:
+            host: 172.16.201.201
+      - ace:
+          sequence: 20
+          grant: deny
+          protocol: ip
+          source:
+            any: true
+          destination:
+            any: true 
 
-  - address: 172.16.201.200
-    key: Pvl4$pl1t
-    acl_name: PULA-ACL-SPLIT
-    src_ip: 172.16.201.202
-    dst_ip: 172.16.201.200
+  - acl_name: PULA-ACL-SPLIT
+    entries:
+      - ace:
+          sequence: 10
+          grant: permit
+          protocol: gre
+          source:
+            host: 172.16.201.202
+          destination:
+            host: 172.16.201.200
+      - ace:
+          sequence: 20
+          grant: deny
+          protocol: ip
+          source:
+            any: true
+          destination:
+            any: true
 
 ospf_processes:
   - process_id: 100
@@ -203,66 +246,68 @@ nat:
 nat_acl:
   name: NAT_ACL
   entries:
-    - ace:
-        sequence: 10
-        grant: deny
-        source:
-          address: 172.20.8.160
-          wildcard_bits: 0.0.0.31
+    # - ace:
+    #     sequence: 10
+    #     grant: deny
+    #     source:
+    #       address: 172.20.8.160
+    #       wildcard_bits: 0.0.0.31
     - ace:
         sequence: 20
         grant: permit
         source:
-          address: 172.20.8.0
-          wildcard_bits: 0.0.3.255
-
-static_nat:
-  - inside_ip: 172.20.8.146
-    outside_interface: "{{ rInt['Gig0/2'] }}"
-    port_local: 22
-    port_global: 2225
-
-guest_acl:
-  name: GUEST_ACL
-  entries:
-    - ace: # Deny access to internal networks
-        sequence: 10
-        grant: deny
-        protocol: ip
-        source: 
-          address: 172.20.8.192
-          wildcard_bits: 0.0.0.63
-        destination:
+          # address: 172.20.8.0
+          # wildcard_bits: 0.0.3.255
           address: 172.20.0.0
           wildcard_bits: 0.0.255.255
-    - ace: # Deny access to VPN networks
-        sequence: 20
-        grant: deny
-        protocol: ip
-        source:
-          address: 172.20.8.192
-          wildcard_bits: 0.0.0.63
-        destination:
-          address: 10.0.0.0
-          wildcard_bits: 0.0.0.15
-    - ace: # Allow access to the Internet
-        sequence: 30
-        grant: permit
-        protocol: ip
-        source:
-          address: 172.20.8.192
-          wildcard_bits: 0.0.0.63
-        destination:
-          any: true
 
-voip_phones:
-  gtw: 172.20.8.161
-  msg: "VoIP-Pl"
-  dial_peers:
-    - name: 2000
-      pattern: "2..."
-      ip: 10.0.0.9
-  lines:
-    - name: 1
-      mac: 0015.63FF.5EB9
-      ext: 2001
+# static_nat:
+#   - inside_ip: 172.20.8.146
+#     outside_interface: "{{ rInt['Gig0/2'] }}"
+#     port_local: 22
+#     port_global: 2225
+
+# guest_acl:
+#   name: GUEST_ACL
+#   entries:
+#     - ace: # Deny access to internal networks
+#         sequence: 10
+#         grant: deny
+#         protocol: ip
+#         source: 
+#           address: 172.20.8.192
+#           wildcard_bits: 0.0.0.63
+#         destination:
+#           address: 172.20.0.0
+#           wildcard_bits: 0.0.255.255
+#     - ace: # Deny access to VPN networks
+#         sequence: 20
+#         grant: deny
+#         protocol: ip
+#         source:
+#           address: 172.20.8.192
+#           wildcard_bits: 0.0.0.63
+#         destination:
+#           address: 10.0.0.0
+#           wildcard_bits: 0.0.0.15
+#     - ace: # Allow access to the Internet
+#         sequence: 30
+#         grant: permit
+#         protocol: ip
+#         source:
+#           address: 172.20.8.192
+#           wildcard_bits: 0.0.0.63
+#         destination:
+#           any: true
+
+# voip_phones:
+#   gtw: 172.20.8.161
+#   msg: "VoIP-Pl"
+#   dial_peers:
+#     - name: 2000
+#       pattern: "2..."
+#       ip: 172.16.201.202
+#   lines:
+#     - name: 1
+#       mac: 0015.63FF.5EB9
+#       ext: 2001

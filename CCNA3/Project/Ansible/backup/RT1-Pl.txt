@@ -2,9 +2,10 @@ Building configuration...
 
 
   
-Current configuration : 8273 bytes
+Current configuration : 7119 bytes
 !
-! Last configuration change at 21:33:27 UTC Tue Mar 3 2026 by cisco
+! Last configuration change at 02:35:41 UTC Thu Mar 5 2026 by cisco
+! NVRAM config last updated at 01:59:53 UTC Thu Mar 5 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -51,12 +52,12 @@ ip dhcp pool Guests-Pl
 ip dhcp pool VoIP
  network 172.20.8.160 255.255.255.224
  default-router 172.20.8.161 
+ option 150 ip 172.20.8.161 
 !
 !
 !
 no ip domain lookup
 ip domain name isepacademy.ccna.itn.com
-ip host RT1-St 10.0.0.6
 ip host SW1-Pl 172.20.8.146
 ip host MLS1-Zg 172.20.0.158
 ip host MLS2-Zg 172.20.0.154
@@ -74,6 +75,7 @@ ip host AP1-St 172.20.12.16
 ip host PCD 172.20.13.134
 ip host RT1-Zg 10.0.0.1
 ip host RT1-Pl 10.0.0.2
+ip host RT1-St 10.0.0.10
 ip cef
 login block-for 300 attempts 3 within 120
 ipv6 unicast-routing
@@ -140,14 +142,10 @@ crypto ipsec transform-set TSET esp-aes esp-sha-hmac
 !
 !
 crypto map CROATIA 10 ipsec-isakmp 
- set peer 203.0.113.2
- set peer 172.16.201.193
  set peer 172.16.201.201
  set transform-set TSET 
  match address ZAGREB-ACL-PULA
-crypto map CROATIA 30 ipsec-isakmp 
- set peer 203.0.113.4
- set peer 172.16.201.195
+crypto map CROATIA 20 ipsec-isakmp 
  set peer 172.16.201.200
  set transform-set TSET 
  match address PULA-ACL-SPLIT
@@ -255,7 +253,6 @@ interface GigabitEthernet0/1.60
  description Trunk for Vlan 60 Guests
  encapsulation dot1Q 60
  ip address 172.20.8.193 255.255.255.192
- ip access-group GUEST_ACL in
  ip nat inside
  ip virtual-reassembly in
  ip ospf 100 area 0
@@ -302,46 +299,21 @@ no ip http server
 no ip http secure-server
 !
 ip nat inside source list NAT_ACL interface GigabitEthernet0/2 overload
-ip nat inside source static tcp 172.20.8.146 22 interface GigabitEthernet0/2 2225
 ip route 0.0.0.0 0.0.0.0 172.16.201.254
 ip ssh version 2
 !
 ip access-list standard NAT_ACL
- deny   172.20.8.160 0.0.0.31
- permit 172.20.8.0 0.0.3.255
-ip access-list standard SNMP_ACL
- permit 172.20.0.197
-ip access-list standard SSH_ACL
- permit 172.20.3.0 0.0.0.255
- permit 172.20.2.0 0.0.0.255
- permit 172.20.9.0 0.0.0.127
- permit 172.20.13.128 0.0.0.127
+ permit 172.20.0.0 0.0.255.255
 !
-ip access-list extended GUEST_ACL
- deny   ip 172.20.8.192 0.0.0.63 172.20.0.0 0.0.255.255
- deny   ip 172.20.8.192 0.0.0.63 10.0.0.0 0.0.0.15
- permit ip 172.20.8.192 0.0.0.63 any
 ip access-list extended PULA-ACL-SPLIT
- permit gre host 203.0.113.3 host 203.0.113.4
- deny   ip any any
- permit gre host 172.16.201.194 host 172.16.201.195
  permit gre host 172.16.201.202 host 172.16.201.200
-ip access-list extended ZAGREB-ACL-PULA
- permit gre host 203.0.113.3 host 203.0.113.2
  deny   ip any any
- permit gre host 172.16.201.194 host 172.16.201.193
+ip access-list extended ZAGREB-ACL-PULA
  permit gre host 172.16.201.202 host 172.16.201.201
-!
-logging snmp-trap emergencies
-logging snmp-trap alerts
-logging snmp-trap critical
-logging snmp-trap errors
-logging snmp-trap warnings
-logging snmp-trap informational
-logging host 172.20.0.197
+ deny   ip any any
 !
 !
-snmp-server community cisco RO SNMP_ACL
+!
 !
 control-plane
 !
@@ -384,6 +356,6 @@ line vty 0 4
  transport input ssh
 !
 scheduler allocate 20000 1000
-ntp server 203.0.113.1
+ntp server 172.16.201.201
 !
 end

@@ -1,70 +1,47 @@
 ---
-- name: Configure NTP upstream servers
-  cisco.ios.ios_ntp_global:
-    config:
-      servers:
-        - server: "{{ item }}"
-      master:
-        enabled: true
-        stratum: "{{ ntp.master.stratum }}"
-      source: "{{ ntp.master.source }}"
-    state: merged
-  loop: "{{ ntp.servers }}"
-  when: ntp.master.enabled
-  tags: ntp
+# - name: Configure SNMP ACL
+#   cisco.ios.ios_acls:
+#     config:
+#       - afi: ipv4
+#         acls:
+#           - name: "{{ snmp_acl.name }}"
+#             acl_type: standard
+#             aces: "{{ snmp_acl.entries | map(attribute='ace') | list }}"
+#     state: deleted
+#   when: snmp_acl is defined
+#   tags: snmp
 
-- name: Configure NTP client
-  cisco.ios.ios_ntp_global:
-    config:
-      servers:
-        - server: "{{ ntp.client.server }}"
-    state: merged
-  when: not ntp.master.enabled
-  tags: ntp
+# - name: Configure SNMPv2c
+#   cisco.ios.ios_snmp_server:
+#     config:
+#       communities:
+#         - name: "{{ snmp.community }}"
+#           ro: "{{ snmp.access == 'ro' }}"
+#           acl_v4: "{{ snmp_acl.name if snmp_acl is defined else omit }}"
+#     state: deleted
+#   when: snmp is defined
+#   tags: snmp
 
-- name: Configure SNMP ACL
-  cisco.ios.ios_acls:
-    config:
-      - afi: ipv4
-        acls:
-          - name: "{{ snmp_acl.name }}"
-            acl_type: standard
-            aces: "{{ snmp_acl.entries | map(attribute='ace') | list }}"
-    state: replaced
-  when: snmp_acl is defined
-  tags: snmp
+# - name: Configure Syslog server
+#   cisco.ios.ios_config:
+#     lines:
+#       - "no logging host {{ syslog.server }}"
+#       - "no logging trap {{ syslog.trap }}"
+#       # - "no logging on"
+#   when: syslog is defined
+#   tags: syslog
 
-- name: Configure SNMPv2c
-  cisco.ios.ios_snmp_server:
-    config:
-      communities:
-        - name: "{{ snmp.community }}"
-          ro: "{{ snmp.access == 'ro' }}"
-          acl_v4: "{{ snmp_acl.name if snmp_acl is defined else omit }}"
-    state: merged
-  when: snmp is defined
-  tags: snmp
-
-- name: Configure Syslog server
-  cisco.ios.ios_config:
-    lines:
-      - "logging host {{ syslog.server }}"
-      - "logging trap {{ syslog.trap }}"
-      - "logging on"
-  when: syslog is defined
-  tags: syslog
-
-- name: Configure SSH ACL
-  cisco.ios.ios_acls:
-    config:
-      - afi: ipv4
-        acls:
-          - name: "{{ ssh_acl.name }}"
-            acl_type: standard
-            aces: "{{ ssh_acl.entries | map(attribute='ace') | list }}"
-    state: replaced
-  when: ssh_acl is defined
-  tags: ssh
+# - name: Configure SSH ACL
+#   cisco.ios.ios_acls:
+#     config:
+#       - afi: ipv4
+#         acls:
+#           - name: "{{ ssh_acl.name }}"
+#             acl_type: standard
+#             aces: "{{ ssh_acl.entries | map(attribute='ace') | list }}"
+#     state: deleted
+#   when: ssh_acl is defined
+#   tags: ssh
 
 - name: Configure IP Host Entries
   cisco.ios.ios_config:
@@ -74,6 +51,14 @@
   when: ip_hosts is defined
   diff: yes
   tags: hosts
+
+# - name: Configure VTY ACL
+#   cisco.ios.ios_config:
+#     lines:
+#       - "access-class {{ ssh_acl.name }} in"
+#     parents: "line vty 0 4"
+#   when: ssh_acl is defined
+#   tags: vty_acl
 
 - name: Save Configuration
   cisco.ios.ios_config:

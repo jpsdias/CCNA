@@ -33,46 +33,98 @@ l3_interfaces:
     ipv6:
       address: "2001:D::1/64"
 
-gre_tunnels:
+peer_pub_address: 172.16.201.201
+
+ipsec_peers:
+  - key: "z4gr3bPvl4"
+    address: 172.16.201.202
+    seq: 10
+    acl_name: ZAGREB-ACL-PULA
+
+  - key: "z4gr3b$pl1t"
+    address: 172.16.201.200
+    seq: 20
+    acl_name: ZAGREB-ACL-SPLIT
+
+tunnels:
   - name: Tunnel0
     description: Zagreb to Pula
-    ip: 10.0.0.1
-    mask: 255.255.255.252
-    source: 172.16.201.201
-    destination: 172.16.201.202
+    ipv4:
+      address: 10.0.0.1
+      prefix: 30
+    tunnel:
+      source: 172.16.201.201
+      destination: 172.16.201.202
 
   - name: Tunnel1
     description: Zagreb to Split
-    ip: 10.0.0.5
-    mask: 255.255.255.252
-    source: 172.16.201.201
-    destination: 172.16.201.202
+    ipv4:
+      address: 10.0.0.5
+      prefix: 30
+    tunnel:
+      source: 172.16.201.201
+      destination: 172.16.201.200
     
-ipsec_peers:
-  - address: 172.16.201.202
-    key: z4gr3bPvl4
-    acl_name: ZAGREB-ACL-PULA
-    src_ip: 172.16.201.201
-    dst_ip: 172.16.201.202
+ipsec_acls:
+  - acl_name: ZAGREB-ACL-PULA
+    entries:
+      - ace:
+          sequence: 10
+          grant: permit
+          protocol: gre
+          source:
+            host: 172.16.201.201
+          destination:
+            host: 172.16.201.202
+      - ace:
+          sequence: 20
+          grant: deny
+          protocol: ip
+          source:
+            any: true
+          destination:
+            any: true
 
-  - address: 172.16.201.200
-    key: z4gr3b$pl1t
-    acl_name: ZAGREB-ACL-SPLIT
-    src_ip: 172.16.201.201
-    dst_ip: 172.16.201.200
+  - acl_name: ZAGREB-ACL-SPLIT
+    entries:
+      - ace:
+          sequence: 10
+          grant: permit
+          protocol: gre
+          source:
+            host: 172.16.201.201
+          destination:
+            host: 172.16.201.200
+      - ace:
+          sequence: 20
+          grant: deny
+          protocol: ip
+          source:
+            any: true
+          destination:
+            any: true
 
 ospf_processes:
   - process_id: 100
     router_id: 1.1.1.1
-    passive_interfaces:
-      - Loopback0
+    passive_interfaces: []
     active_interfaces:
       - "{{ rInt['Gig0/0'] }}"
       - "{{ rInt['Gig0/1'] }}"
       - "{{ rInt['Gig0/2'] }}"
       - Tunnel0
       - Tunnel1
-      - Loopback0
+
+ntp:
+  servers:
+    - 216.239.35.12
+    - 216.239.35.8
+    - 216.239.35.0
+    - 216.239.35.4
+  master:
+    enabled: true
+    stratum: 3
+    source: "{{ rInt['Gig0/2'] }}"
 
 static_routes:
   # Default route
@@ -89,18 +141,20 @@ nat:
 nat_acl:
   name: NAT_ACL
   entries:
-    - ace:
-        sequence: 10
-        grant: deny
-        source:
-          address: 172.20.6.0
-          wildcard_bits: 0.0.1.255
+    # - ace:
+    #     sequence: 10
+    #     grant: deny
+    #     source:
+    #       address: 172.20.6.0
+    #       wildcard_bits: 0.0.1.255
     - ace:
         sequence: 20
         grant: permit
         source:
+          # address: 172.20.0.0
+          # wildcard_bits: 0.0.7.255
           address: 172.20.0.0
-          wildcard_bits: 0.0.7.255
+          wildcard_bits: 0.0.255.255
 
 static_nat:
   - inside_ip: 172.20.0.196
@@ -113,43 +167,33 @@ static_nat:
     port_local: 443
     port_global: 443
 
-  # - proto: tcp
-  #   inside_ip: 172.20.0.196
+  - proto: tcp
+    inside_ip: 172.20.0.196
+    outside_interface: "{{ rInt['Gig0/2'] }}"
+    port_local: 22
+    port_global: 22
+
+  # - inside_ip: 172.20.0.196
   #   outside_interface: "{{ rInt['Gig0/2'] }}"
   #   port_local: 22
-  #   port_global: 22
+  #   port_global: 2222
 
-  - inside_ip: 172.20.0.196
-    outside_interface: "{{ rInt['Gig0/2'] }}"
-    port_local: 22
-    port_global: 2222
-
-  - inside_ip: 172.20.0.158
-    outside_interface: "{{ rInt['Gig0/2'] }}"
-    port_local: 22
-    port_global: 2223
+  # - inside_ip: 172.20.0.158
+  #   outside_interface: "{{ rInt['Gig0/2'] }}"
+  #   port_local: 22
+  #   port_global: 2223
     
-  - inside_ip: 172.20.0.154
-    outside_interface: "{{ rInt['Gig0/2'] }}"
-    port_local: 22
-    port_global: 2224
+  # - inside_ip: 172.20.0.154
+  #   outside_interface: "{{ rInt['Gig0/2'] }}"
+  #   port_local: 22
+  #   port_global: 2224
 
-  - inside_ip: 172.20.0.228
-    outside_interface: "{{ rInt['Gig0/2'] }}"
-    port_local: 22
-    port_global: 2225
+  # - inside_ip: 172.20.0.228
+  #   outside_interface: "{{ rInt['Gig0/2'] }}"
+  #   port_local: 22
+  #   port_global: 2225
     
-  - inside_ip: 172.20.0.229
-    outside_interface: "{{ rInt['Gig0/2'] }}"
-    port_local: 22
-    port_global: 2226
-ntp:
-  servers:
-    - 216.239.35.12
-    - 216.239.35.8
-    - 216.239.35.0
-    - 216.239.35.4
-  master:
-    enabled: true
-    stratum: 2
-    source: Loopback0
+  # - inside_ip: 172.20.0.229
+  #   outside_interface: "{{ rInt['Gig0/2'] }}"
+  #   port_local: 22
+  #   port_global: 2226

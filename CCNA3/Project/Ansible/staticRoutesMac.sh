@@ -4,13 +4,13 @@
 # Exit on any error
 set -e
 
-GATEWAY="192.168.1.100"
+GATEWAY="172.16.201.201"
 
 echo "Adding routes via $GATEWAY..."
 
 # Add routes
-sudo route -n add -net 172.20.0.0/16 $GATEWAY
-sudo route -n add -net 10.0.0.0/27 $GATEWAY
+sudo route -n delete -net 172.20.0.0/16 $GATEWAY
+sudo route -n delete -net 10.0.0.0/27 $GATEWAY
 
 #echo "Routes successfully added:"
 #ip route | grep "$GATEWAY"

@@ -1,9 +1,9 @@
 Building configuration...
 
-Current configuration : 7121 bytes
+Current configuration : 6882 bytes
 !
-! Last configuration change at 00:54:33 UTC Tue Mar 3 2026 by cisco
-! NVRAM config last updated at 00:54:34 UTC Tue Mar 3 2026 by cisco
+! Last configuration change at 01:44:40 UTC Thu Mar 5 2026 by cisco
+! NVRAM config last updated at 01:44:41 UTC Thu Mar 5 2026 by cisco
 !
 version 15.0
 no service pad
@@ -16,6 +16,7 @@ hostname SW2-Zg
 boot-start-marker
 boot-end-marker
 !
+no logging on
 enable secret 5 $1$QmeZ$Ds7dDJVP2h/2FKHVzRIbM1
 !
 username cisco privilege 15 secret 5 $1$1fbB$A7SLYM0Rj32RyJU1uJ4gY.
@@ -25,24 +26,24 @@ system mtu routing 1500
 !
 no ip domain-lookup
 ip domain-name isepacademy.ccna.itn.com
-ip host PCD 172.20.13.134
-ip host AP1-St 172.20.12.16
-ip host SW1-St 172.20.12.18
-ip host RT1-St 10.0.0.6
-ip host PCC 172.20.9.6
-ip host AP1-Pl 172.20.8.154
-ip host SW1-Pl 172.20.8.146
-ip host RT1-Pl 10.0.0.2
-ip host PCB 172.20.2.6
-ip host PCA 172.20.3.6
-ip host DHCP-SRV 172.20.0.196
-ip host AP1-Zg 172.20.0.165
-ip host WLC1-Zg 172.20.0.230
-ip host SW2-Zg 172.20.0.229
-ip host SW1-Zg 172.20.0.228
-ip host MLS2-Zg 172.20.0.154
-ip host MLS1-Zg 172.20.0.158
+ip host RT1-St 10.0.0.10
 ip host RT1-Zg 10.0.0.1
+ip host MLS1-Zg 172.20.0.158
+ip host MLS2-Zg 172.20.0.154
+ip host SW1-Zg 172.20.0.228
+ip host SW2-Zg 172.20.0.229
+ip host WLC1-Zg 172.20.0.230
+ip host AP1-Zg 172.20.0.165
+ip host DHCP-SRV 172.20.0.196
+ip host PCA 172.20.3.6
+ip host PCB 172.20.2.6
+ip host RT1-Pl 10.0.0.2
+ip host SW1-Pl 172.20.8.146
+ip host AP1-Pl 172.20.8.154
+ip host PCC 172.20.9.6
+ip host SW1-St 172.20.12.18
+ip host AP1-St 172.20.12.16
+ip host PCD 172.20.13.134
 login block-for 300 attempts 3 within 120
 !
 !
@@ -264,17 +265,8 @@ ip default-gateway 172.20.0.225
 ip http server
 ip http secure-server
 !
-ip access-list standard SNMP_ACL
- permit 172.20.0.197
-ip access-list standard SSH_ACL
- permit 172.20.3.0 0.0.0.255
- permit 172.20.2.0 0.0.0.255
- permit 172.20.9.0 0.0.0.127
- permit 172.20.13.128 0.0.0.127
+no logging trap
 !
-logging host 172.20.0.197
-!
-snmp-server community cisco RO SNMP_ACL
 !
 vstack
 banner motd ^C
@@ -288,5 +280,5 @@ line vty 0 4
 line vty 5 15
  login
 !
-ntp server 203.0.113.1
+ntp server 172.16.201.201
 end

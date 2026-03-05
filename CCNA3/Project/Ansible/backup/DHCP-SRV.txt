@@ -3,10 +3,10 @@ Building configuration...
 
   
   
-Current configuration : 6996 bytes
+Current configuration : 6611 bytes
 !
-! No configuration change since last restart
-! NVRAM config last updated at 21:38:23 UTC Tue Mar 3 2026 by cisco
+! Last configuration change at 02:06:32 UTC Thu Mar 5 2026 by cisco
+! NVRAM config last updated at 02:07:47 UTC Thu Mar 5 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -60,6 +60,7 @@ ip dhcp pool Staff
 ip dhcp pool VoIP
  network 172.20.6.0 255.255.255.0
  default-router 172.20.6.1 
+ option 150 ip 172.20.6.1 
 !
 ip dhcp pool Wireless-Zg
  network 172.20.4.0 255.255.254.0
@@ -90,7 +91,7 @@ ip host AP1-St 172.20.12.16
 ip host PCD 172.20.13.134
 ip host RT1-Zg 10.0.0.1
 ip host RT1-Pl 10.0.0.2
-ip host RT1-St 10.0.0.6
+ip host RT1-St 10.0.0.10
 ip cef
 login block-for 300 attempts 3 within 120
 ipv6 unicast-routing
@@ -263,26 +264,10 @@ ip http secure-server
 ip route 0.0.0.0 0.0.0.0 172.20.0.194
 ip ssh version 2
 !
-ip access-list standard SNMP_ACL
- permit 172.20.0.197
-ip access-list standard SSH_ACL
- permit 172.20.3.0 0.0.0.255
- permit 172.20.2.0 0.0.0.255
- permit 172.20.9.0 0.0.0.127
- permit 172.20.13.128 0.0.0.127
 !
-!
-logging snmp-trap emergencies
-logging snmp-trap alerts
-logging snmp-trap critical
-logging snmp-trap errors
-logging snmp-trap warnings
-logging snmp-trap informational
-logging host 172.20.0.197
 ipv6 ioam timestamp
 !
 !
-snmp-server community cisco RO SNMP_ACL
 !
 control-plane
 !
@@ -325,6 +310,6 @@ line vty 0 4
  transport input ssh
 !
 scheduler allocate 20000 1000
-ntp server 203.0.113.1
+ntp server 172.16.201.201
 !
 end

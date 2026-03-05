@@ -2,10 +2,10 @@ Building configuration...
 
 
   
-Current configuration : 6107 bytes
+Current configuration : 4417 bytes
 !
-! Last configuration change at 21:38:19 UTC Tue Mar 3 2026 by cisco
-! NVRAM config last updated at 21:38:20 UTC Tue Mar 3 2026 by cisco
+! Last configuration change at 02:35:41 UTC Thu Mar 5 2026 by cisco
+! NVRAM config last updated at 01:59:53 UTC Thu Mar 5 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -37,6 +37,8 @@ memory-size iomem 5
 !
 no ip domain lookup
 ip domain name isepacademy.ccna.itn.com
+ip host RT1-Zg 10.0.0.1
+ip host RT1-St 10.0.0.10
 ip host RT1-Pl 10.0.0.2
 ip host DHCP-SRV 172.20.0.196
 ip host SW1-Pl 172.20.8.146
@@ -53,8 +55,6 @@ ip host PCC 172.20.9.6
 ip host SW1-St 172.20.12.18
 ip host AP1-St 172.20.12.16
 ip host PCD 172.20.13.134
-ip host RT1-Zg 10.0.0.1
-ip host RT1-St 10.0.0.6
 ip cef
 login block-for 300 attempts 3 within 120
 ipv6 unicast-routing
@@ -108,14 +108,10 @@ crypto ipsec transform-set TSET esp-aes esp-sha-hmac
 !
 !
 crypto map CROATIA 10 ipsec-isakmp 
- set peer 203.0.113.3
- set peer 172.16.201.194
  set peer 172.16.201.202
  set transform-set TSET 
  match address ZAGREB-ACL-PULA
 crypto map CROATIA 20 ipsec-isakmp 
- set peer 203.0.113.4
- set peer 172.16.201.195
  set peer 172.16.201.200
  set transform-set TSET 
  match address ZAGREB-ACL-SPLIT
@@ -123,12 +119,6 @@ crypto map CROATIA 20 ipsec-isakmp
 !
 !
 !
-!
-interface Loopback0
- description NTP Server
- ip address 203.0.113.1 255.255.255.255
- ip ospf 100 area 0
- ipv6 address 2001:D::1/64
 !
 interface Tunnel0
  description Zagreb to Pula
@@ -142,7 +132,7 @@ interface Tunnel1
  ip address 10.0.0.5 255.255.255.252
  ip ospf 100 area 0
  tunnel source 172.16.201.201
- tunnel destination 172.16.201.202
+ tunnel destination 172.16.201.200
 !
 interface Embedded-Service-Engine0/0
  no ip address
@@ -190,7 +180,6 @@ interface Serial0/0/1
 !
 router ospf 100
  router-id 1.1.1.1
- passive-interface Loopback0
  default-information originate
 !
 ip forward-protocol nd
@@ -198,49 +187,22 @@ ip forward-protocol nd
 no ip http server
 no ip http secure-server
 !
-ip nat inside source static tcp 172.20.0.158 22 interface GigabitEthernet0/2 2223
 ip nat inside source list NAT_ACL interface GigabitEthernet0/2 overload
-ip nat inside source static tcp 172.20.0.196 80 interface GigabitEthernet0/2 80
-ip nat inside source static tcp 172.20.0.196 443 interface GigabitEthernet0/2 443
-ip nat inside source static tcp 172.20.0.196 22 interface GigabitEthernet0/2 2222
-ip nat inside source static tcp 172.20.0.154 22 interface GigabitEthernet0/2 2224
-ip nat inside source static tcp 172.20.0.228 22 interface GigabitEthernet0/2 2225
-ip nat inside source static tcp 172.20.0.229 22 interface GigabitEthernet0/2 2226
 ip route 0.0.0.0 0.0.0.0 172.16.201.254
 ip ssh version 2
 !
 ip access-list standard NAT_ACL
- permit 172.20.0.0 0.0.7.255
- deny   172.20.6.0 0.0.1.255
-ip access-list standard SNMP_ACL
- permit 172.20.0.197
-ip access-list standard SSH_ACL
- permit 172.20.3.0 0.0.0.255
- permit 172.20.2.0 0.0.0.255
- permit 172.20.9.0 0.0.0.127
- permit 172.20.13.128 0.0.0.127
+ permit 172.20.0.0 0.0.255.255
 !
 ip access-list extended ZAGREB-ACL-PULA
- permit gre host 203.0.113.2 host 203.0.113.3
- deny   ip any any
- permit gre host 172.16.201.193 host 172.16.201.194
  permit gre host 172.16.201.201 host 172.16.201.202
-ip access-list extended ZAGREB-ACL-SPLIT
- permit gre host 203.0.113.2 host 203.0.113.4
  deny   ip any any
- permit gre host 172.16.201.193 host 172.16.201.195
+ip access-list extended ZAGREB-ACL-SPLIT
  permit gre host 172.16.201.201 host 172.16.201.200
-!
-logging snmp-trap emergencies
-logging snmp-trap alerts
-logging snmp-trap critical
-logging snmp-trap errors
-logging snmp-trap warnings
-logging snmp-trap informational
-logging host 172.20.0.197
+ deny   ip any any
 !
 !
-snmp-server community cisco RO SNMP_ACL
+!
 !
 control-plane
 !
@@ -283,11 +245,11 @@ line vty 0 4
  transport input ssh
 !
 scheduler allocate 20000 1000
-ntp source Loopback0
-ntp master
+ntp source GigabitEthernet0/2
+ntp master 3
 ntp server 216.239.35.8
 ntp server 216.239.35.0
-ntp server 216.239.35.12
 ntp server 216.239.35.4
+ntp server 216.239.35.12
 !
 end

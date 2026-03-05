@@ -13,3 +13,4 @@ rInt: "{{ rInt_real if interface_type == 'real' else rInt_pnet }}"
 
 management_interface:
   - "{{ rInt['Gig0/2'] ~ '.6' }}"
+

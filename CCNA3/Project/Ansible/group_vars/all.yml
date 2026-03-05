@@ -84,7 +84,7 @@ ip_hosts:
     
   # Split
   - name: RT1-St
-    ip:  10.0.0.6
+    ip:  10.0.0.10
 
   - name: SW1-St
     ip: 172.20.12.18
@@ -99,7 +99,7 @@ ntp:
   master:
     enabled: false
   client:
-    server: 203.0.113.1
+    server: 172.16.201.201
 
 snmp_acl:
   name: SNMP_ACL

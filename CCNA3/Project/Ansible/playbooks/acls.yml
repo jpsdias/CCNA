@@ -1,0 +1,63 @@
+---
+- name: Remove ACLs
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Configure Guest ACL
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ guest_acl.name }}"
+                acl_type: extended
+                aces:
+                  - sequence: 10
+                    grant: permit
+                    protocol: ip
+                    source:
+                      any: true
+                    destination:
+                      any: true
+        state: deleted
+      when: guest_acl is defined
+      tags: guest_acl
+        
+    - name: Configure SNMP ACL
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ snmp_acl.name }}"
+                acl_type: standard
+                aces:
+                  - sequence: 10
+                    grant: permit
+                    source:
+                      any: true
+        state: deleted
+      when: snmp_acl is defined
+      tags: snmp_acl
+
+    - name: Configure SSH ACL
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ ssh_acl.name }}"
+                acl_type: standard
+                aces:
+                  - sequence: 10
+                    grant: permit
+                    source:
+                      any: true
+        state: deleted
+      when: ssh_acl is defined
+      tags: ssh_acl
+
+    - name: Save Configuration
+      cisco.ios.ios_config:
+        save_when: always
+      tags: save
+
+
