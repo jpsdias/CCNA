@@ -1,9 +1,9 @@
 Building configuration...
 
-Current configuration : 15704 bytes
+Current configuration : 15786 bytes
 !
-! Last configuration change at 01:29:06 UTC Thu Mar 5 2026 by cisco
-! NVRAM config last updated at 01:29:29 UTC Thu Mar 5 2026 by cisco
+! Last configuration change at 00:12:18 UTC Sat Mar 7 2026 by cisco
+! NVRAM config last updated at 00:19:26 UTC Sat Mar 7 2026 by cisco
 !
 version 16.12
 no service pad
@@ -540,6 +540,7 @@ router ospf 100
  passive-interface Vlan40
  passive-interface Vlan50
  passive-interface Vlan60
+ default-information originate
 !
 ip default-gateway 172.20.0.157
 ip forward-protocol nd
@@ -552,8 +553,10 @@ ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
 !
 !
 !
+logging host 172.20.0.197
 !
 !
+snmp-server community cisco RO
 !
 control-plane
  service-policy input system-cpp-policy
@@ -573,7 +576,7 @@ line vty 0 4
 line vty 5 15
  login
 !
-ntp server 172.16.201.201
+ntp server 10.0.0.1
 !
 !
 !

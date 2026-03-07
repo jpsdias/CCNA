@@ -2,10 +2,10 @@ Building configuration...
 
 
   
-Current configuration : 7177 bytes
+Current configuration : 7840 bytes
 !
-! Last configuration change at 02:35:41 UTC Thu Mar 5 2026 by cisco
-! NVRAM config last updated at 01:59:53 UTC Thu Mar 5 2026 by cisco
+! Last configuration change at 00:12:20 UTC Sat Mar 7 2026 by cisco
+! NVRAM config last updated at 00:19:31 UTC Sat Mar 7 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -146,7 +146,6 @@ crypto map CROATIA 10 ipsec-isakmp
  set transform-set TSET 
  match address ZAGREB-ACL-SPLIT
 crypto map CROATIA 20 ipsec-isakmp 
- set peer 172.16.201.201
  set peer 172.16.201.202
  set transform-set TSET 
  match address PULA-ACL-SPLIT
@@ -267,7 +266,6 @@ interface GigabitEthernet0/2
  ip address 172.16.201.200 255.255.255.0
  ip nat outside
  ip virtual-reassembly in
- ip ospf 100 area 0
  duplex auto
  speed auto
  crypto map CROATIA
@@ -313,8 +311,10 @@ ip access-list extended ZAGREB-ACL-SPLIT
  permit gre host 172.16.201.200 host 172.16.201.201
  deny   ip any any
 !
+logging host 172.20.0.197
 !
 !
+snmp-server community cisco RO
 !
 control-plane
 !
@@ -333,11 +333,45 @@ mgcp profile default
 !
 !
 !
+dial-peer voice 1000 voip
+ description OUTGOING CALLS
+ destination-pattern 1...
+ session target ipv4:10.0.0.5
+!
+dial-peer voice 2000 voip
+ description OUTGOING CALLS
+ destination-pattern 2...
+ session target ipv4:10.0.0.9
+!
 !
 !
 !
 gatekeeper
  shutdown
+!
+!
+telephony-service
+ max-ephones 58
+ max-dn 128
+ ip source-address 172.20.12.129 port 2000
+ system message Welcome to Split!
+ cnf-file location flash:
+ load 7912 CP7912080004SCCP080108A.sbin
+ max-conferences 8 gain -6
+ transfer-system full-consult
+ create cnf-files version-stamp 7960 Mar 06 2026 22:20:28
+!
+!
+ephone-dn  1
+ number 3001
+!
+!
+ephone  1
+ device-security-mode none
+ mac-address 0015.638A.D38B
+ type 7912
+ button  1:1
+!
 !
 banner motd ^CC
 Welcome to RT1-St!
@@ -357,6 +391,6 @@ line vty 0 4
  transport input ssh
 !
 scheduler allocate 20000 1000
-ntp server 172.16.201.201
+ntp server 10.0.0.1
 !
 end

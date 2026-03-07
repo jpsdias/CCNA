@@ -61,3 +61,5 @@ sInt: "{{ sInt_real if interface_type == 'real' else sInt_pnet }}"
 
 management_vlan:
   - 6
+
+guest_interface: "Vlan60"

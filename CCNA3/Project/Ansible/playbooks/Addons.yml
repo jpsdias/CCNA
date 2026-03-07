@@ -96,55 +96,54 @@
       tags: ipsec_acl
 
     # Part 5: Routing -------------------------------------
-    - name: Configure OSPF process - Routers
-      cisco.ios.ios_ospfv2:
+    - name: Delete provided OSPF outside interface
+      cisco.ios.ios_ospf_interfaces:
         config:
-          processes:
-            - process_id: "{{ item.process_id }}"
-              router_id: "{{ item.router_id }}"
-              default_information:
-                originate: true
-        state: replaced
-      loop: "{{ ospf_processes }}"
+          - name: "{{ rInt['Gig0/2'] }}"
+        state: deleted
       when: 
-        - ospf_processes is defined
+        - ospf is defined
         - "'routers' in group_names"
       tags: ospf
 
-    - name: Configure OSPF process - MLS
+    - name: Configure OSPF process
       cisco.ios.ios_ospfv2:
         config:
           processes:
-            - process_id: "{{ item.process_id }}"
-              router_id: "{{ item.router_id }}"
+            - process_id: 100
+              router_id: "{{ ospf.router_id }}"
+              default_information:
+                originate: "{{ 'routers' in group_names }}"
         state: replaced
-      loop: "{{ ospf_processes }}"
-      when:
-        - ospf_processes is defined
-        - "'mls' in group_names"
+      when: ospf is defined
       tags: ospf
 
-    - name: Configure OSPF passive interfaces
-      cisco.ios.ios_config:
-        lines:
-          - "passive-interface {{ item }}"
-        parents: "router ospf {{ ospf_processes[0].process_id }}"
-      loop: "{{ ospf_processes[0].passive_interfaces | default([]) }}"
-      when: ospf_processes is defined and ospf_processes[0].passive_interfaces | default([]) | length > 0
-      tags: ospf
-
-    - name: Enable OSPF on active interfaces
+    - name: Configure OSPF on interfaces
       cisco.ios.ios_ospf_interfaces:
         config:
           - name: "{{ item }}"
             address_family:
               - afi: ipv4
                 process:
-                  id: "{{ ospf_processes[0].process_id }}"
-                  area_id: "0"
-        state: replaced
-      loop: "{{ ospf_processes[0].active_interfaces }}"
-      when: ospf_processes is defined and ospf_processes[0].active_interfaces is defined
+                  id: 100
+                  area_id: 0
+        state: merged
+      loop: "{{ ospf.interfaces }}"
+      when: ospf is defined
+      tags: ospf
+
+    - name: Configure OSPF passive interfaces
+      cisco.ios.ios_ospfv2:
+        config:
+          processes:
+            - process_id: 100
+              passive_interfaces:
+                interface:
+                  set_interface: true
+                  name: "{{ item }}"
+        state: merged
+      loop: "{{ ospf.passive_interfaces }}"
+      when: ospf is defined
       tags: ospf
 
     # Part 6 Static and Dynamic NAT ---------------------------------
@@ -184,22 +183,76 @@
       when: nat is defined and nat_acl is defined
       tags: nat
 
-    # - name: Bind NAT ACL to outside interface
-    #   cisco.ios.ios_config:
-    #     lines:
-    #       - "ip nat inside source static tcp {{ item.inside_ip }} {{ item.port_local }} interface {{ item.outside_interface }} {{ item.port_global }}"
-    #   loop: "{{ static_nat }}"
-    #   when: static_nat is defined
-    #   tags: static_nat
+    - name: Bind NAT ACL to outside interface
+      cisco.ios.ios_config:
+        lines:
+          - "ip nat inside source static tcp {{ item.inside_ip }} {{ item.port_local }} interface {{ item.outside_interface }} {{ item.port_global }}"
+      loop: "{{ static_nat }}"
+      when: static_nat is defined
+      tags: static_nat
 
-    # - name: Configure HTTP server on DHCP-SRV
-    #   cisco.ios.ios_config:
-    #     lines:
-    #       - ip http server
-    #       - ip http secure-server
-    #       - ip http authentication local
-    #   when: http_server is defined and http_server.enabled
-    #   tags: http
+    - name: Configure HTTP server on DHCP-SRV
+      cisco.ios.ios_config:
+        lines:
+          - ip http server
+          - ip http secure-server
+          - ip http authentication local
+      when: "'servers' in group_names"
+      tags: http
+
+    # Part 7: Telephony Services
+    - name: Configure VoIP option
+      cisco.ios.ios_config:
+        lines:
+          - "option 150 ip {{ voip_phones.gtw }}"
+        parents: "ip dhcp pool VoIP"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure telephony service
+      cisco.ios.ios_config:
+        lines:
+          - "max-ephones 58"
+          - "max-dn 128"
+          - "ip source-address {{ voip_phones.gtw }} port 2000"
+          - "system message {{ voip_phones.msg }}"
+          - "cnf-file location flash:"
+          - "load 7912 CP7912080004SCCP080108A.sbin"
+          - "create cnf-files"
+        parents: "telephony-service"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure extensions-dn for VoIP phones
+      cisco.ios.ios_config:
+        lines:
+          - "number {{ item.ext }}"
+        parents: "ephone-dn {{ item.name }}"
+      loop: "{{ voip_phones.lines }}"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure extensions for VoIP phones
+      cisco.ios.ios_config:
+        lines:
+          - "mac-address {{ item.mac }}"
+          - "type 7912"
+          - "button 1:{{ item.name }}"
+        parents: "ephone {{ item.name }}"
+      loop: "{{ voip_phones.lines }}"
+      when: voip_phones is defined
+      tags: voip
+
+    - name: Configure dial-peer for VoIP phones
+      cisco.ios.ios_config:
+        lines:
+          - "description OUTGOING CALLS"
+          - "destination-pattern {{ item.pattern }}"
+          - "session target ipv4:{{ item.ip }}"
+        parents: "dial-peer voice {{ item.name }} voip"
+      loop: "{{ voip_phones.dial_peers }}"
+      when: voip_phones is defined
+      tags: voip
 
     # Part 8: NTP ------------------------------------
     - name: Configure NTP upstream servers
@@ -223,6 +276,27 @@
         state: replaced
       when: not ntp.master.enabled
       tags: ntp
+
+      # Part 9: Syslog and SNMP ---------------------------------
+    - name: Configure SNMPv2c
+      cisco.ios.ios_snmp_server:
+        config:
+          communities:
+            - name: "{{ snmp.community }}"
+              ro: "{{ snmp.access == 'ro' }}"
+              # acl_v4: "{{ snmp_acl.name if snmp_acl is defined else omit }}"
+        state: replaced
+      when: snmp is defined
+      tags: snmp
+
+    - name: Configure Syslog server
+      cisco.ios.ios_config:
+        lines:
+          - "logging host {{ syslog.server }}"
+          - "logging trap {{ syslog.trap }}"
+          - "logging on"
+      when: syslog is defined
+      tags: syslog
 
     - name: Save Configuration
       cisco.ios.ios_config:

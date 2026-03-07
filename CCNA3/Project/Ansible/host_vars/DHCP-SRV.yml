@@ -136,18 +136,16 @@ static_routes:
     prefix: 0
     next_hop: 172.20.0.194
 
-http_server:
-  enabled: true
-  secure: true
-  auth: local
-
 voip_phones:
-  gtw: 172.20.6.1
-  msg: "VoIP-Zg"
+  gtw: 172.20.6.5
+  msg: "Welcome to Zagreb!"
   dial_peers:
-    - name: 1000
-      pattern: "1..."
-      ip: 172.16.201.201
+    - name: 2000
+      pattern: "2..."
+      ip: 10.0.0.2
+    - name: 3000
+      pattern: "3..."
+      ip: 10.0.0.6
   lines:
     - name: 1
       mac: 0015.63AC.AAF1

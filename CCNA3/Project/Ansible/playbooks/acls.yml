@@ -1,28 +1,41 @@
 ---
-- name: Remove ACLs
+- name: ACLs
   hosts: all
   gather_facts: no
 
   tasks:
-    - name: Configure Guest ACL
+    - name: Configure GUEST_ACL to only allow access to WAN
       cisco.ios.ios_acls:
         config:
           - afi: ipv4
             acls:
               - name: "{{ guest_acl.name }}"
                 acl_type: extended
-                aces:
-                  - sequence: 10
-                    grant: permit
-                    protocol: ip
-                    source:
-                      any: true
-                    destination:
-                      any: true
-        state: deleted
-      when: guest_acl is defined
+                aces: "{{ guest_acl.entries | map(attribute='ace') | list }}"
+        state: replaced
+      when: guest_interface is defined
       tags: guest_acl
-        
+
+    - name: Apply GUEST_ACL to interface
+      cisco.ios.ios_config:
+        lines:
+          - ip access-group GUEST_ACL in
+        parents: "interface {{ guest_interface }}"
+      when: guest_interface is defined
+      tags: guest_acl
+
+    - name: Configure NAT ACL to disallow VoIP
+      cisco.ios.ios_acls:
+        config:
+          - afi: ipv4
+            acls:
+              - name: "{{ nat_acl.name }}"
+                acl_type: standard
+                aces: "{{ nat_acl.entries | map(attribute='ace') | list }}"
+        state: replaced
+      when: nat_acl is defined
+      tags: nat_acl
+
     - name: Configure SNMP ACL
       cisco.ios.ios_acls:
         config:
@@ -30,14 +43,21 @@
             acls:
               - name: "{{ snmp_acl.name }}"
                 acl_type: standard
-                aces:
-                  - sequence: 10
-                    grant: permit
-                    source:
-                      any: true
-        state: deleted
+                aces: "{{ snmp_acl.entries | map(attribute='ace') | list }}"
+        state: replaced
       when: snmp_acl is defined
       tags: snmp_acl
+
+    - name: Configure SNMPv2c
+      cisco.ios.ios_snmp_server:
+        config:
+          communities:
+            - name: "{{ snmp.community }}"
+              ro: "{{ snmp.access == 'ro' }}"
+              acl_v4: "{{ snmp_acl.name if snmp_acl is defined else omit }}"
+        state: replaced
+      when: snmp is defined
+      tags: snmp
 
     - name: Configure SSH ACL
       cisco.ios.ios_acls:
@@ -46,18 +66,16 @@
             acls:
               - name: "{{ ssh_acl.name }}"
                 acl_type: standard
-                aces:
-                  - sequence: 10
-                    grant: permit
-                    source:
-                      any: true
-        state: deleted
+                aces: "{{ ssh_acl.entries | map(attribute='ace') | list }}"
+        state: replaced
       when: ssh_acl is defined
       tags: ssh_acl
 
-    - name: Save Configuration
+    - name: Configure VTY ACL
       cisco.ios.ios_config:
-        save_when: always
-      tags: save
-
+        lines:
+          - "access-class {{ ssh_acl.name }} in"
+        parents: "line vty 0 4"
+      when: ssh_acl is defined
+      tags: ssh
 

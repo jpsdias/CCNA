@@ -3,10 +3,10 @@ Building configuration...
 
   
   
-Current configuration : 6611 bytes
+Current configuration : 7442 bytes
 !
-! Last configuration change at 02:06:32 UTC Thu Mar 5 2026 by cisco
-! NVRAM config last updated at 02:07:47 UTC Thu Mar 5 2026 by cisco
+! Last configuration change at 00:12:20 UTC Sat Mar 7 2026 by cisco
+! NVRAM config last updated at 00:19:31 UTC Sat Mar 7 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -60,7 +60,7 @@ ip dhcp pool Staff
 ip dhcp pool VoIP
  network 172.20.6.0 255.255.255.0
  default-router 172.20.6.1 
- option 150 ip 172.20.6.1 
+ option 150 ip 172.20.6.5 
 !
 ip dhcp pool Wireless-Zg
  network 172.20.4.0 255.255.254.0
@@ -265,9 +265,11 @@ ip route 0.0.0.0 0.0.0.0 172.20.0.194
 ip ssh version 2
 !
 !
+logging host 172.20.0.197
 ipv6 ioam timestamp
 !
 !
+snmp-server community cisco RO
 !
 control-plane
 !
@@ -286,11 +288,57 @@ mgcp profile default
 !
 !
 !
+dial-peer voice 2000 voip
+ description OUTGOING CALLS
+ destination-pattern 2...
+ session target ipv4:10.0.0.2
+!
+dial-peer voice 3000 voip
+ description OUTGOING CALLS
+ destination-pattern 3...
+ session target ipv4:10.0.0.6
+!
 !
 !
 !
 gatekeeper
  shutdown
+!
+!
+telephony-service
+ max-ephones 58
+ max-dn 128
+ ip source-address 172.20.6.5 port 2000
+ system message Welcome to Zagreb!
+ cnf-file location flash:
+ load 7912 CP7912080004SCCP080108A.sbin
+ max-conferences 8 gain -6
+ transfer-system full-consult
+ create cnf-files version-stamp 7960 Mar 06 2026 23:23:34
+!
+!
+ephone-dn  1
+ number 1001
+!
+!
+ephone-dn  2
+ number 1002
+!
+!
+ephone  1
+ device-security-mode none
+ mac-address 0015.63AC.AAF1
+ type 7912
+ button  1:1
+!
+!
+!
+ephone  2
+ device-security-mode none
+ mac-address 0015.63AC.AACD
+ type 7912
+ button  1:2
+!
 !
 banner motd ^CC
 Welcome to DHCP-SRV!
@@ -310,6 +358,6 @@ line vty 0 4
  transport input ssh
 !
 scheduler allocate 20000 1000
-ntp server 172.16.201.201
+ntp server 10.0.0.1
 !
 end

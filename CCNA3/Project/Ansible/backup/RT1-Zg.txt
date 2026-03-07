@@ -2,10 +2,10 @@ Building configuration...
 
 
   
-Current configuration : 4417 bytes
+Current configuration : 4685 bytes
 !
-! Last configuration change at 02:35:41 UTC Thu Mar 5 2026 by cisco
-! NVRAM config last updated at 01:59:53 UTC Thu Mar 5 2026 by cisco
+! Last configuration change at 00:12:20 UTC Sat Mar 7 2026 by cisco
+! NVRAM config last updated at 00:19:29 UTC Sat Mar 7 2026 by cisco
 !
 version 15.7
 service timestamps debug datetime msec
@@ -163,7 +163,6 @@ interface GigabitEthernet0/2
  ip address 172.16.201.201 255.255.255.0
  ip nat outside
  ip virtual-reassembly in
- ip ospf 100 area 0
  duplex auto
  speed auto
  crypto map CROATIA
@@ -188,6 +187,9 @@ no ip http server
 no ip http secure-server
 !
 ip nat inside source list NAT_ACL interface GigabitEthernet0/2 overload
+ip nat inside source static tcp 172.20.0.196 80 interface GigabitEthernet0/2 80
+ip nat inside source static tcp 172.20.0.196 443 interface GigabitEthernet0/2 443
+ip nat inside source static tcp 172.20.0.196 22 interface GigabitEthernet0/2 22
 ip route 0.0.0.0 0.0.0.0 172.16.201.254
 ip ssh version 2
 !
@@ -201,8 +203,10 @@ ip access-list extended ZAGREB-ACL-SPLIT
  permit gre host 172.16.201.201 host 172.16.201.200
  deny   ip any any
 !
+logging host 172.20.0.197
 !
 !
+snmp-server community cisco RO
 !
 control-plane
 !
@@ -245,7 +249,7 @@ line vty 0 4
  transport input ssh
 !
 scheduler allocate 20000 1000
-ntp source GigabitEthernet0/2
+ntp source Tunnel0
 ntp master 3
 ntp server 216.239.35.8
 ntp server 216.239.35.0

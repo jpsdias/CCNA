@@ -208,30 +208,52 @@ ipsec_acls:
           destination:
             any: true
 
-ospf_processes:
-  - process_id: 100
-    router_id: 2.2.2.2
-    passive_interfaces:
-      - Loopback0
-      - Loopback2
-    active_interfaces:
-      - "{{ rInt['Gig0/1'] }}.5"
-      - "{{ rInt['Gig0/1'] }}.6"
-      - "{{ rInt['Gig0/1'] }}.30"
-      - "{{ rInt['Gig0/1'] }}.40"
-      - "{{ rInt['Gig0/1'] }}.50"
-      - "{{ rInt['Gig0/1'] }}.60"
-      - "{{ rInt['Gig0/2'] }}"
-      - Tunnel0
-      - Tunnel2
-      - Loopback0
-      - Loopback2
+ospf:
+  router_id: 2.2.2.2
+  passive_interfaces:
+    - Loopback0
+    - Loopback2
+    - "{{ rInt['Gig0/1'] }}.5"
+    - "{{ rInt['Gig0/1'] }}.6"
+    - "{{ rInt['Gig0/1'] }}.30"
+    - "{{ rInt['Gig0/1'] }}.40"
+    - "{{ rInt['Gig0/1'] }}.50"
+    - "{{ rInt['Gig0/1'] }}.60"
+  interfaces:
+    - Tunnel0
+    - Tunnel2
+    - Loopback0
+    - Loopback2
+    - "{{ rInt['Gig0/1'] }}.5"
+    - "{{ rInt['Gig0/1'] }}.6"
+    - "{{ rInt['Gig0/1'] }}.30"
+    - "{{ rInt['Gig0/1'] }}.40"
+    - "{{ rInt['Gig0/1'] }}.50"
+    - "{{ rInt['Gig0/1'] }}.60"
 
 static_routes:
   # Default route
   - dest: "0.0.0.0"
     prefix: 0
     next_hop: "172.16.201.254"
+
+nat_acl:
+  name: NAT_ACL
+  entries:
+    - ace:
+        sequence: 10
+        grant: deny
+        source:
+          address: 172.20.8.160
+          wildcard_bits: 0.0.0.31
+    - ace:
+        sequence: 20
+        grant: permit
+        source:
+          # address: 172.20.8.0
+          # wildcard_bits: 0.0.3.255
+          address: 172.20.0.0
+          wildcard_bits: 0.0.255.255
 
 nat:
   inside_interfaces:
@@ -243,71 +265,25 @@ nat:
     - "{{ rInt['Gig0/1'] }}.60"
   outside_interface: "{{ rInt['Gig0/2'] }}"
 
-nat_acl:
-  name: NAT_ACL
-  entries:
-    # - ace:
-    #     sequence: 10
-    #     grant: deny
-    #     source:
-    #       address: 172.20.8.160
-    #       wildcard_bits: 0.0.0.31
-    - ace:
-        sequence: 20
-        grant: permit
-        source:
-          # address: 172.20.8.0
-          # wildcard_bits: 0.0.3.255
-          address: 172.20.0.0
-          wildcard_bits: 0.0.255.255
+voip_phones:
+  gtw: 172.20.8.161
+  msg: "Welcome to Pula!"
+  dial_peers:
+    - name: 1000
+      pattern: "1..."
+      ip: 10.0.0.1
+    - name: 3000
+      pattern: "3..."
+      ip: 10.0.0.10
+  lines:
+    - name: 1
+      mac: 0015.63FF.5EB9
+      ext: 2001
+
+guest_interface: "{{ rInt['Gig0/1'] }}.60"
 
 # static_nat:
 #   - inside_ip: 172.20.8.146
 #     outside_interface: "{{ rInt['Gig0/2'] }}"
 #     port_local: 22
 #     port_global: 2225
-
-# guest_acl:
-#   name: GUEST_ACL
-#   entries:
-#     - ace: # Deny access to internal networks
-#         sequence: 10
-#         grant: deny
-#         protocol: ip
-#         source: 
-#           address: 172.20.8.192
-#           wildcard_bits: 0.0.0.63
-#         destination:
-#           address: 172.20.0.0
-#           wildcard_bits: 0.0.255.255
-#     - ace: # Deny access to VPN networks
-#         sequence: 20
-#         grant: deny
-#         protocol: ip
-#         source:
-#           address: 172.20.8.192
-#           wildcard_bits: 0.0.0.63
-#         destination:
-#           address: 10.0.0.0
-#           wildcard_bits: 0.0.0.15
-#     - ace: # Allow access to the Internet
-#         sequence: 30
-#         grant: permit
-#         protocol: ip
-#         source:
-#           address: 172.20.8.192
-#           wildcard_bits: 0.0.0.63
-#         destination:
-#           any: true
-
-# voip_phones:
-#   gtw: 172.20.8.161
-#   msg: "VoIP-Pl"
-#   dial_peers:
-#     - name: 2000
-#       pattern: "2..."
-#       ip: 172.16.201.202
-#   lines:
-#     - name: 1
-#       mac: 0015.63FF.5EB9
-#       ext: 2001

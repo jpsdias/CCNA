@@ -99,7 +99,15 @@ ntp:
   master:
     enabled: false
   client:
-    server: 172.16.201.201
+    server: 10.0.0.1
+
+snmp:
+  community: cisco
+  access: ro
+
+syslog:
+  server: 172.20.0.197
+  trap: informational
 
 snmp_acl:
   name: SNMP_ACL
@@ -110,14 +118,6 @@ snmp_acl:
         source:
           address: 172.20.0.197
           wildcard_bits: 0.0.0.0
-
-snmp:
-  community: cisco
-  access: ro
-
-syslog:
-  server: 172.20.0.197
-  trap: informational
 
 ssh_acl:
   name: SSH_ACL
@@ -146,3 +146,24 @@ ssh_acl:
         source:
           address: 172.20.13.128
           wildcard_bits: 0.0.0.127
+
+guest_acl:
+  name: GUEST_ACL
+  entries:
+    - ace: # Deny access to internal networks
+        sequence: 10
+        grant: deny
+        protocol: ip
+        source:
+          any: true
+        destination:
+          address: 172.20.0.0
+          wildcard_bits: 0.0.255.255
+    - ace: # Allow access to Internet
+        sequence: 20
+        grant: permit
+        protocol: ip
+        source:
+          any: true
+        destination:
+          any: true

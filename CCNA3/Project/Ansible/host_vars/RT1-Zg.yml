@@ -104,39 +104,20 @@ ipsec_acls:
           destination:
             any: true
 
-ospf_processes:
-  - process_id: 100
-    router_id: 1.1.1.1
-    passive_interfaces: []
-    active_interfaces:
-      - "{{ rInt['Gig0/0'] }}"
-      - "{{ rInt['Gig0/1'] }}"
-      - "{{ rInt['Gig0/2'] }}"
-      - Tunnel0
-      - Tunnel1
-
-ntp:
-  servers:
-    - 216.239.35.12
-    - 216.239.35.8
-    - 216.239.35.0
-    - 216.239.35.4
-  master:
-    enabled: true
-    stratum: 3
-    source: "{{ rInt['Gig0/2'] }}"
+ospf:
+  router_id: 1.1.1.1
+  passive_interfaces: []
+  interfaces:
+    - "{{ rInt['Gig0/0'] }}"
+    - "{{ rInt['Gig0/1'] }}"
+    - Tunnel0
+    - Tunnel1
 
 static_routes:
   # Default route
   - dest: "0.0.0.0"
     prefix: 0
     next_hop: "172.16.201.254"
-
-nat:
-  inside_interfaces:
-    - "{{ rInt['Gig0/0'] }}"
-    - "{{ rInt['Gig0/1'] }}"
-  outside_interface: "{{ rInt['Gig0/2'] }}"
 
 nat_acl:
   name: NAT_ACL
@@ -155,6 +136,12 @@ nat_acl:
           # wildcard_bits: 0.0.7.255
           address: 172.20.0.0
           wildcard_bits: 0.0.255.255
+
+nat:
+  inside_interfaces:
+    - "{{ rInt['Gig0/0'] }}"
+    - "{{ rInt['Gig0/1'] }}"
+  outside_interface: "{{ rInt['Gig0/2'] }}"
 
 static_nat:
   - inside_ip: 172.20.0.196
@@ -197,3 +184,16 @@ static_nat:
   #   outside_interface: "{{ rInt['Gig0/2'] }}"
   #   port_local: 22
   #   port_global: 2226
+
+ntp:
+  servers:
+    - 216.239.35.12
+    - 216.239.35.8
+    - 216.239.35.0
+    - 216.239.35.4
+  master:
+    enabled: true
+    stratum: 3
+    source: Tunnel0
+
+
