@@ -113,11 +113,18 @@ snmp_acl:
   name: SNMP_ACL
   entries:
     - ace:
-        sequence: 10
+        sequence: 10 #Syslog Server
         grant: permit
         source:
           address: 172.20.0.197
           wildcard_bits: 0.0.0.0
+    - ace:
+        sequence: 20 # Deny all other SNMP access
+        grant: deny
+        source:
+          any: true
+        destination:
+          any: true
 
 ssh_acl:
   name: SSH_ACL
@@ -146,6 +153,13 @@ ssh_acl:
         source:
           address: 172.20.13.128
           wildcard_bits: 0.0.0.127
+    - ace:
+        sequence: 50 #Deny all other SSH access
+        grant: deny
+        source:
+          any: true
+        destination:
+          any: true
 
 guest_acl:
   name: GUEST_ACL
@@ -163,6 +177,13 @@ guest_acl:
         sequence: 20
         grant: permit
         protocol: ip
+        source:
+          any: true
+        destination:
+          any: true
+    - ace:
+        sequence: 30 # Deny all other access
+        grant: deny
         source:
           any: true
         destination:
